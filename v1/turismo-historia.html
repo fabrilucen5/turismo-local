@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud - Historia Cl&iacute;nica</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="turismo-shared.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --orange-bg:#FFF8E7;--orange-border:#F5A623;--orange-text:#7a4f00;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Inter',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.header{background:var(--navy);padding:18px 24px;display:flex;align-items:center;gap:16px;border-bottom:3px solid var(--gold)}
+.header img{height:60px;width:auto;object-fit:contain}
+.hdr-sep{width:1.5px;height:44px;background:rgba(255,255,255,.25);flex-shrink:0}
+.hdr-text{flex:1;display:flex;flex-direction:column;gap:3px}
+.hdr-title{font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px}
+.hdr-sub{font-size:12px;color:var(--gold);font-weight:500}
+.op-banner{background:#002e52;padding:12px 24px;border-bottom:1px solid rgba(255,255,255,.08)}
+.op-banner-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
+.op-banner-name{font-size:15px;font-weight:700;color:#fff;margin-top:3px;line-height:1.4}
+.body{padding:18px;background:var(--bg)}
+.card{background:#fff;border:.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);display:inline-block}
+.field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);transition:border-color .2s;font-family:'Poppins','Inter',sans-serif;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+textarea{resize:vertical;min-height:90px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* Checkboxes de enfermedades */
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:.15s;user-select:none}
+.check-item.checked{border-color:var(--navy);background:#e8edf8}
+.check-item input[type=checkbox]{width:18px;height:18px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;margin:0}
+.check-item span{font-size:14px;font-weight:500}
+/* Botones */
+.btn-primary{width:100%;padding:15px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:4px}
+.btn-primary:active{background:var(--blue)}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-gold{width:100%;padding:13px;background:var(--gold);color:var(--navy);border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:8px}
+.btn-gold:active{background:var(--gold2)}
+.btn-outline{width:100%;padding:13px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:8px}
+.btn-outline:active{background:var(--bg)}
+/* Alerts */
+.alert{border-radius:10px;padding:13px 16px;font-size:14px;font-weight:500;margin-bottom:14px;display:none}
+.alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
+.alert-err{background:var(--red-bg);border:1.5px solid var(--red-border);color:#7f1d1d}
+.alert-info{background:#e8edf8;border:1.5px solid #b5d4f4;color:#003D6B}
+/* Menor */
+.menor-note{background:var(--orange-bg);border:1.5px solid var(--orange-border);border-radius:9px;padding:12px 16px;font-size:13px;color:var(--orange-text);margin-bottom:14px;line-height:1.5;display:flex;align-items:flex-start;gap:10px}
+.tutor-section{display:none}
+.tutor-section.show{display:block}
+/* Confirmado */
+.confirmado-card{text-align:center;padding:36px 20px}
+.confirmado-icon{font-size:56px;margin-bottom:16px}
+.confirmado-title{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.confirmado-sub{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+/* Loading */
+.loading-wrap{display:flex;align-items:center;gap:12px;justify-content:center;padding:48px 20px;color:var(--muted);font-size:15px}
+.spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:480px){
+  .header{padding:12px 16px;gap:12px}
+  .header img{height:48px}
+  .hdr-sep{height:36px}
+  .hdr-title{font-size:16px}
+  .op-banner{padding:10px 16px}
+  .body{padding:14px}
+  .g2,.g3{grid-template-columns:1fr}
+  .checks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
+      alt="Alma Salud"
+      onerror="this.onerror=null;this.src='https://fabrilucen5.github.io/imagenesalmasalud/Alma%20Salud%20-%20Logo%202.png'">
+    <div class="hdr-sep"></div>
+    <div class="hdr-text">
+      <span class="hdr-title">ALMA SALUD</span>
+      <span class="hdr-sub">Historia cl&iacute;nica &mdash; Turismo local</span>
+    </div>
+  </div>
+  <div class="op-banner">
+    <div class="op-banner-label">Operativo</div>
+    <div class="op-banner-name" id="banner-operativo">&nbsp;</div>
+  </div>
+  <div class="body" id="app-body">
+    <div class="loading-wrap"><div class="spinner"></div>Iniciando...</div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzGrZ7z9iK4vaKcP-kDcqMnQyJ3vETIUkj5UZ1w2gfYl5QRYlxC6VIEonkc_dBN6ISh/exec';
+
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+const params      = new URLSearchParams(window.location.search);
+const OP_ID       = params.get('operativo')||'';
+const OP_NOMBRE   = params.get('on')||'';
+
+// ── Funciones del formulario ──────────────────────────────────────────
+window.toggleSinMed = function(){
+  const cb=document.getElementById('toggle-sin-med');
+  const ta=document.getElementById('f-medicacion');
+  if(cb.checked){ta.value='Ninguna';ta.disabled=true;ta.style.background='var(--bg)';ta.style.color='var(--green)';}
+  else{ta.value='';ta.disabled=false;ta.style.background='';ta.style.color='';}
+};
+window.toggleSinAlerg = function(){
+  const cb=document.getElementById('toggle-sin-alerg');
+  const ta=document.getElementById('f-alergias');
+  if(cb.checked){ta.value='Ninguna';ta.disabled=true;ta.style.background='var(--bg)';ta.style.color='var(--green)';}
+  else{ta.value='';ta.disabled=false;ta.style.background='';ta.style.color='';}
+};
+
+window.checkEdad = function(){
+  const edad = parseInt(document.getElementById('f-edad').value||'99');
+  document.getElementById('tutor-section').classList.toggle('show', edad>0 && edad<18);
+};
+
+window.toggleCheck = function(el){
+  const cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+  if(cb.value==='Otra'){
+    const wrap=document.getElementById('otra-enf-wrap');
+    if(wrap) wrap.style.display=cb.checked?'block':'none';
+  }
+};
+
+window.guardarHistoria = async function(){
+  const nombre  = (document.getElementById('f-nombre').value||'').trim();
+  const edad    = (document.getElementById('f-edad').value||'').trim();
+  const dni     = (document.getElementById('f-dni').value||'').trim();
+  const sexo    = document.getElementById('f-sexo').value;
+  const tel     = (document.getElementById('f-telefono').value||'').trim();
+  const ubic    = (document.getElementById('f-ubicacion').value||'').trim();
+  const grupo   = document.getElementById('f-grupo').value;
+  const contNom = (document.getElementById('f-cont-nombre').value||'').trim();
+  const contTel = (document.getElementById('f-cont-tel').value||'').trim();
+  const obra    = (document.getElementById('f-obra-social').value||'').trim();
+  const afil    = (document.getElementById('f-afiliado').value||'').trim();
+  const med     = (document.getElementById('f-medicacion').value||'').trim();
+  const alerg   = (document.getElementById('f-alergias').value||'').trim();
+  const cir     = (document.getElementById('f-cirugias').value||'').trim();
+  const obs     = (document.getElementById('f-obs').value||'').trim();
+  const edadNum = parseInt(edad||'99');
+  const esMenor = edadNum>0 && edadNum<18;
+  const tutorNom= esMenor?(document.getElementById('f-tutor-nom').value||'').trim():'';
+  const tutorTel= esMenor?(document.getElementById('f-tutor-tel').value||'').trim():'';
+
+  const enfs=[];
+  document.querySelectorAll('.enfermedad-cb:checked').forEach(cb=>enfs.push(cb.value));
+  if(enfs.includes('Otra')){
+    const otraText=(document.getElementById('f-otra-enf')?.value||'').trim();
+    if(otraText) enfs[enfs.indexOf('Otra')]='Otra: '+otraText;
+  }
+
+  if(!nombre||!edad||!contNom||!contTel){
+    mostrarAlerta('alert-err','Complet&aacute; los campos obligatorios marcados con *.');
+    return;
+  }
+  if(esMenor&&(!tutorNom||!tutorTel)){
+    mostrarAlerta('alert-err','El paciente es menor de edad: complet&aacute; los datos del padre, madre o tutor.');
+    return;
+  }
+
+  const btn=document.getElementById('btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+  mostrarAlerta('alert-info','Guardando historia cl&iacute;nica...');
+
+  const nuevoId='p'+Date.now();
+  const ficha={
+    nombre, edad, dni, sexo, telefono:tel, ubicacion:ubic,
+    grupoSanguineo:grupo,
+    enfermedadesCronicas:enfs.join(', '),
+    medicacion:med||'Ninguna', alergias:alerg||'Ninguna', cirugias:cir||'Ninguna',
+    contactoEmergenciaNombre:contNom, contactoEmergenciaTel:contTel,
+    obraSocial:obra, numAfiliado:afil,
+    tutorNombre:tutorNom, tutorTel, obs,
+    fechaEnvio:new Date().toISOString()
+  };
+
+  // Guardar en cache local
+  const cacheKey='as_t_op_'+OP_ID+'_participantes';
+  const lista=lsJson(cacheKey)||[];
+  lista.push({
+    id:nuevoId, nombre, telefono:tel, ubicacion:ubic,
+    fichaCompletada:true, fechaFicha:ficha.fechaEnvio,
+    fichaData:ficha
+  });
+  lsSet(cacheKey,JSON.stringify(lista));
+  lsSet(cacheKey+'_ts','0'); // forzar recarga la próxima vez
+
+  // Enviar a Sheets
+  fetch(SHEETS_URL,{
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({tipo:'historia_clinica', operativoId:OP_ID, participanteId:nuevoId, ...ficha})
+  }).catch(()=>{});
+
+  mostrarConfirmado(nombre);
+};
+
+// ── Estados de pantalla ───────────────────────────────────────────────
+function mostrarAlerta(id,msg){
+  ['alert-ok','alert-err','alert-info'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none';});
+  const el=document.getElementById(id);
+  if(el){el.innerHTML=msg;el.style.display='block';}
+}
+
+function mostrarConfirmado(nombre){
+  const urlPanel='turismo-medico.html'+(OP_ID?'?operativo='+OP_ID:'');
+  document.getElementById('app-body').innerHTML=`
+    <div class="card confirmado-card">
+      <div class="confirmado-icon">&#9989;</div>
+      <div class="confirmado-title">Historia guardada</div>
+      <div class="confirmado-sub">
+        La historia cl&iacute;nica de <strong>${esc(nombre)}</strong> fue registrada correctamente.<br>
+        El paciente ya aparece en el panel m&eacute;dico del operativo.
+      </div>
+      <button class="btn-primary" onclick="window.location.href='${urlPanel}'">&#8592; Volver al panel m&eacute;dico</button>
+      <button class="btn-gold" onclick="window.location.reload()">&#43; Nueva historia cl&iacute;nica</button>
+    </div>`;
+}
+
+function mostrarSinOperativo(){
+  document.getElementById('app-body').innerHTML=`
+    <div class="card confirmado-card">
+      <div class="confirmado-icon">&#128203;</div>
+      <div class="confirmado-title">Acceso desde el panel m&eacute;dico</div>
+      <div class="confirmado-sub">
+        Este formulario se abre desde el panel m&eacute;dico de un operativo activo.<br><br>
+        <a href="turismo-medico.html" style="color:var(--navy);font-weight:600">&#8592; Ir al panel m&eacute;dico</a>
+      </div>
+    </div>`;
+}
+
+function renderForm(nombreOperativo){
+  document.getElementById('banner-operativo').textContent = nombreOperativo || 'Operativo';
+  document.getElementById('app-body').innerHTML=`
+    <div class="alert alert-ok"  id="alert-ok"></div>
+    <div class="alert alert-err" id="alert-err"></div>
+    <div class="alert alert-info" id="alert-info"></div>
+
+    <div class="card">
+      <div class="section-title">&#128100; Datos del paciente</div>
+      <div class="field">
+        <label>Nombre completo <span style="color:#DC2626">*</span></label>
+        <input type="text" id="f-nombre" placeholder="Nombre y apellido del paciente" autocomplete="off" autocorrect="off">
+      </div>
+      <div class="g3">
+        <div class="field">
+          <label>Edad <span style="color:#DC2626">*</span></label>
+          <input type="number" id="f-edad" placeholder="A&ntilde;os" min="1" max="110" oninput="window.checkEdad()" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>DNI</label>
+          <input type="text" id="f-dni" placeholder="N&uacute;mero" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Sexo</label>
+          <select id="f-sexo">
+            <option value="">No especifica</option>
+            <option>Masculino</option>
+            <option>Femenino</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <label>Tel&eacute;fono del paciente</label>
+          <input type="tel" id="f-telefono" placeholder="+54 9 ..." inputmode="tel">
+        </div>
+        <div class="field">
+          <label>Ubicaci&oacute;n (hotel / domicilio)</label>
+          <input type="text" id="f-ubicacion" placeholder="Ej: Hotel Sol, hab. 204..." autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128138; Antecedentes m&eacute;dicos</div>
+      <div class="field">
+        <label>Enfermedades cr&oacute;nicas <small style="font-size:10px;font-weight:400;text-transform:none">(marc&aacute; todas las que correspondan)</small></label>
+        <div class="checks">
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Diabetes"><span>Diabetes</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Hipertensi&oacute;n"><span>Hipertensi&oacute;n</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Asma"><span>Asma</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Epilepsia"><span>Epilepsia</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Cardiopat&iacute;a"><span>Cardiopat&iacute;a</span></div>
+          <div class="check-item" onclick="window.toggleCheck(this)"><input type="checkbox" class="enfermedad-cb" value="Otra"><span>Otra</span></div>
+        </div>
+        <div id="otra-enf-wrap" style="display:none;margin-top:8px">
+          <input type="text" id="f-otra-enf" placeholder="Especific&aacute; la enfermedad..." autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label style="margin-bottom:0">Medicaci&oacute;n habitual</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer;margin-bottom:0">
+            <input type="checkbox" id="toggle-sin-med" onchange="window.toggleSinMed()" style="width:16px;height:16px;accent-color:var(--green);margin:0;flex-shrink:0">
+            No toma ninguna
+          </label>
+        </div>
+        <textarea id="f-medicacion" placeholder="Ej: Metformina 850mg, Salbutamol inhalador..."></textarea>
+      </div>
+      <div class="field">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label style="margin-bottom:0">Alergias conocidas</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer;margin-bottom:0">
+            <input type="checkbox" id="toggle-sin-alerg" onchange="window.toggleSinAlerg()" style="width:16px;height:16px;accent-color:var(--green);margin:0;flex-shrink:0">
+            No tiene ninguna
+          </label>
+        </div>
+        <textarea id="f-alergias" placeholder="Ej: Penicilina, ibuprofeno, mariscos..."></textarea>
+      </div>
+      <div class="field">
+        <label>Cirug&iacute;as previas relevantes</label>
+        <input type="text" id="f-cirugias" placeholder="Ej: Rodilla 2023, apendicitis 2021. O &laquo;Ninguna&raquo;." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128657; Datos de emergencia</div>
+      <div class="field">
+        <label>Grupo sangu&iacute;neo</label>
+        <select id="f-grupo">
+          <option value="">No sabe / No recuerda</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>0+</option><option>0-</option>
+        </select>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <label>Contacto de emergencia &mdash; Nombre <span style="color:#DC2626">*</span></label>
+          <input type="text" id="f-cont-nombre" placeholder="Nombre del familiar" autocomplete="off" autocorrect="off">
+        </div>
+        <div class="field">
+          <label>Contacto de emergencia &mdash; Tel&eacute;fono <span style="color:#DC2626">*</span></label>
+          <input type="tel" id="f-cont-tel" placeholder="+54 9 ..." inputmode="tel">
+        </div>
+      </div>
+      <div class="g2">
+        <div class="field">
+          <label>Obra social / Prepaga</label>
+          <input type="text" id="f-obra-social" placeholder="Ej: OSDE, Swiss Medical, IOMA..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label>N&uacute;mero de afiliado</label>
+          <input type="text" id="f-afiliado" placeholder="N&uacute;m. de credencial" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <div class="tutor-section" id="tutor-section">
+      <div class="card">
+        <div class="section-title">&#128106; Padre / Madre / Tutor (menor de edad)</div>
+        <div class="menor-note">&#9888; El paciente es menor de edad. Completar datos del responsable.</div>
+        <div class="g2">
+          <div class="field">
+            <label>Nombre completo <span style="color:#DC2626">*</span></label>
+            <input type="text" id="f-tutor-nom" placeholder="Nombre y apellido" autocomplete="off" autocorrect="off">
+          </div>
+          <div class="field">
+            <label>Tel&eacute;fono / WhatsApp <span style="color:#DC2626">*</span></label>
+            <input type="tel" id="f-tutor-tel" placeholder="+54 9 ..." inputmode="tel">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">&#128221; Observaciones adicionales</div>
+      <div class="field">
+        <textarea id="f-obs" style="min-height:100px" placeholder="Informaci&oacute;n relevante adicional para el equipo m&eacute;dico..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-guardar" onclick="window.guardarHistoria()">&#128190; Guardar historia cl&iacute;nica</button>
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;padding:0 8px;line-height:1.6">
+      &#128274; La informaci&oacute;n es confidencial y ser&aacute; accedida &uacute;nicamente por el equipo m&eacute;dico de Alma Salud.
+    </p>`;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+async function init(){
+  if(!OP_ID){
+    mostrarSinOperativo();
+    return;
+  }
+
+  // Si viene el nombre en la URL, arrancar de inmediato
+  if(OP_NOMBRE){
+    document.getElementById('banner-operativo').textContent=OP_NOMBRE;
+    renderForm(OP_NOMBRE);
+    return;
+  }
+
+  // Buscar nombre en caché local
+  const lista=lsJson('as_t_operativos_lista')||[];
+  const opLocal=lista.find(o=>String(o.id)===String(OP_ID));
+  if(opLocal){
+    document.getElementById('banner-operativo').textContent=opLocal.nombre;
+    renderForm(opLocal.nombre);
+    return;
+  }
+
+  // Último recurso: buscar en Sheets
+  try{
+    const res=await fetch(SHEETS_URL+'?tipo=get_operativo&id='+encodeURIComponent(OP_ID));
+    const data=await res.json();
+    const nombre=(data.ok&&data.operativo)?data.operativo.nombre:'Operativo';
+    document.getElementById('banner-operativo').textContent=nombre;
+    renderForm(nombre);
+  }catch(e){
+    renderForm('Operativo');
+  }
+}
+init();
+</script>
+<script src="viajes-icons.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud &mdash; Gu&iacute;a para el Profesional M&eacute;dico</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1a1a;background:#f4f6fa;font-size:15px;line-height:1.7}
+.page{max-width:780px;margin:0 auto;background:#fff;padding:48px 52px;box-shadow:0 2px 24px rgba(0,0,0,.08)}
+/* Header */
+.doc-header{border-bottom:4px solid #F5A623;padding-bottom:24px;margin-bottom:36px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.doc-logo{display:flex;flex-direction:column;gap:4px}
+.doc-logo-title{font-size:26px;font-weight:800;color:#003D6B;letter-spacing:1px}
+.doc-logo-sub{font-size:13px;color:#F5A623;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.doc-meta{text-align:right;font-size:12px;color:#888;line-height:1.8}
+.doc-main-title{font-size:21px;font-weight:700;color:#003D6B;margin-bottom:6px;margin-top:32px}
+.doc-intro{background:#e8edf8;border-left:4px solid #003D6B;border-radius:0 8px 8px 0;padding:16px 20px;font-size:14px;color:#003D6B;margin-bottom:32px;line-height:1.7}
+/* Secciones */
+h2{font-size:16px;font-weight:700;color:#003D6B;text-transform:uppercase;letter-spacing:.8px;margin:36px 0 16px;padding-bottom:8px;border-bottom:2px solid #F5A623;display:flex;align-items:center;gap:10px}
+h2 .num{background:#003D6B;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+h3{font-size:14px;font-weight:700;color:#003D6B;margin:20px 0 10px}
+/* Pasos */
+.steps{counter-reset:step;list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.steps li::before{counter-increment:step;content:counter(step);background:#003D6B;color:#fff;min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.steps li span{font-size:14px;line-height:1.65}
+/* Destacados */
+.tip{background:#FFF8E7;border:1.5px solid #F5A623;border-radius:8px;padding:13px 16px;font-size:13px;color:#7a4f00;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.tip-icon{font-size:18px;flex-shrink:0;margin-top:-1px}
+.alert-box{background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:8px;padding:13px 16px;font-size:13px;color:#7f1d1d;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.ok-box{background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:8px;padding:13px 16px;font-size:13px;color:#14532d;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+/* Flujo visual */
+.flujo{display:flex;flex-direction:column;gap:0;margin:16px 0 20px}
+.flujo-paso{display:flex;align-items:flex-start;gap:16px}
+.flujo-linea{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
+.flujo-circulo{width:32px;height:32px;background:#003D6B;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.flujo-barra{width:2px;background:#dde3f0;flex:1;min-height:24px;margin:2px 0}
+.flujo-content{padding-bottom:20px;flex:1}
+.flujo-content-title{font-size:14px;font-weight:700;color:#003D6B;margin-bottom:3px}
+.flujo-content-sub{font-size:13px;color:#555;line-height:1.55}
+.flujo-app{display:inline-block;background:#003D6B;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:4px}
+/* Tabla */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+th{background:#003D6B;color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid #eee;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#f7f9fc}
+/* Badge */
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-ok{background:#F0FDF4;color:#16A34A;border:1px solid #86EFAC}
+.badge-pend{background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623}
+/* Footer */
+.doc-footer{margin-top:48px;padding-top:20px;border-top:1px solid #dde3f0;font-size:12px;color:#999;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+/* Print */
+@media print{
+  body{background:#fff}
+  .page{box-shadow:none;padding:20px 24px;max-width:100%}
+  h2{page-break-after:avoid}
+  .flujo-paso{page-break-inside:avoid}
+}
+@media(max-width:600px){
+  .page{padding:24px 20px}
+  .doc-header{flex-direction:column}
+  .doc-meta{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Encabezado -->
+  <div class="doc-header">
+    <div class="doc-logo">
+      <div class="doc-logo-title">ALMA SALUD</div>
+      <div class="doc-logo-sub">Sistema de Turismo Local</div>
+    </div>
+    <div class="doc-meta">
+      Gu&iacute;a para el profesional m&eacute;dico<br>
+      Versi&oacute;n 1.0
+    </div>
+  </div>
+
+  <div class="doc-intro">
+    Este sistema permite registrar <strong>historias cl&iacute;nicas</strong> y <strong>atenciones m&eacute;dicas</strong> durante operativos de turismo local, guardias en hoteles o atenciones a domicilio. Toda la informaci&oacute;n queda centralizada en una planilla, disponible para el equipo m&eacute;dico en tiempo real.
+  </div>
+
+  <!-- ── SECCIÓN 1: APPS ── -->
+  <h2><span class="num">1</span> Las dos aplicaciones del sistema</h2>
+
+  <table>
+    <tr>
+      <th>Aplicaci&oacute;n</th>
+      <th>Para qu&eacute; se usa</th>
+      <th>Qui&eacute;n la usa</th>
+    </tr>
+    <tr>
+      <td><strong>Panel m&eacute;dico</strong><br><small style="color:#888">turismo-medico.html</small></td>
+      <td>Ver la lista de pacientes, registrar atenciones y consultar el historial del operativo</td>
+      <td>El m&eacute;dico / profesional de guardia</td>
+    </tr>
+    <tr>
+      <td><strong>Historia cl&iacute;nica</strong><br><small style="color:#888">turismo-historia.html</small></td>
+      <td>Completar los datos m&eacute;dicos del paciente antes de la atenci&oacute;n (antecedentes, alergias, medicaci&oacute;n, contacto de emergencia)</td>
+      <td>El m&eacute;dico, al iniciar la atenci&oacute;n</td>
+    </tr>
+  </table>
+
+  <div class="tip">
+    <span class="tip-icon">&#128241;</span>
+    <span>Ambas p&aacute;ginas funcionan desde el celular o la computadora, con o sin conexi&oacute;n a internet. Si no hay conexi&oacute;n, los datos se guardan localmente y se sincronizan cuando vuelve la se&ntilde;al.</span>
+  </div>
+
+
+  <!-- ── SECCIÓN 2: PRIMER USO ── -->
+  <h2><span class="num">2</span> Configuraci&oacute;n inicial (primera vez)</h2>
+
+  <ol class="steps">
+    <li><span>Abrí el <strong>Panel m&eacute;dico</strong> en tu celular o computadora.</span></li>
+    <li><span>Va a aparecer un formulario de <strong>identificaci&oacute;n m&eacute;dica</strong>: ingres&aacute; tu nombre completo y matr&iacute;cula. Estos datos se guardan en el dispositivo y no se vuelven a pedir.</span></li>
+    <li><span>Luego aparece el <strong>selector de operativo</strong>. Si ya existe uno creado, seleccionalo. Si es la primera vez, usá el bot&oacute;n <strong>"Crear nuevo operativo"</strong> e ingres&aacute; el nombre y la ubicaci&oacute;n (ej: "Hotel Sol &mdash; Enero 2026").</span></li>
+    <li><span>Listo: ya est&aacute;s dentro del panel m&eacute;dico del operativo.</span></li>
+  </ol>
+
+  <div class="ok-box">
+    <span>&#10003;</span>
+    <span>La pr&oacute;xima vez que abr&aacute;s la app en el mismo dispositivo, va a recordar tu nombre y el operativo activo autom&aacute;ticamente.</span>
+  </div>
+
+
+  <!-- ── SECCIÓN 3: FLUJO COMPLETO ── -->
+  <h2><span class="num">3</span> Flujo de atenci&oacute;n completo (recomendado)</h2>
+
+  <p style="font-size:13px;color:#555;margin-bottom:20px">Este es el flujo ideal: primero se registra la historia cl&iacute;nica del paciente y luego se carga la atenci&oacute;n vinculada a esa historia.</p>
+
+  <div class="flujo">
+
+    <div class="flujo-paso">
+      <div class="flujo-linea">
+        <div class="flujo-circulo">1</div>
+        <div class="flujo-barra"></div>
+      </div>
+      <div class="flujo-content">
+        <span class="flujo-app">Panel m&eacute;dico &rarr; pesta&ntilde;a Pacientes</span>
+        <div class="flujo-content-title">Crear la historia cl&iacute;nica del paciente</div>
+        <div class="flujo-content-sub">Hac&eacute; clic en el bot&oacute;n <strong>"+ Historia cl&iacute;nica"</strong> (arriba a la derecha). Se abre el formulario de historia cl&iacute;nica en una nueva pesta&ntilde;a.</div>
+      </div>
+    </div>
+
+    <div class="flujo-paso">
+      <div class="flujo-linea">
+        <div class="flujo-circulo">2</div>
+        <div class="flujo-barra"></div>
+      </div>
+      <div class="flujo-content">
+        <span class="flujo-app">Historia cl&iacute;nica</span>
+        <div class="flujo-content-title">Completar los datos del paciente</div>
+        <div class="flujo-content-sub">Complet&aacute; nombre, edad, DNI, tel&eacute;fono, ubicaci&oacute;n (hotel/habitaci&oacute;n), antecedentes, medicaci&oacute;n, alergias, contacto de emergencia y obra social. Al terminar, presion&aacute; <strong>"Guardar historia cl&iacute;nica"</strong>.</div>
+      </div>
+    </div>
+
+    <div class="flujo-paso">
+      <div class="flujo-linea">
+        <div class="flujo-circulo">3</div>
+        <div class="flujo-barra"></div>
+      </div>
+      <div class="flujo-content">
+        <span class="flujo-app">Historia cl&iacute;nica &rarr; confirmaci&oacute;n</span>
+        <div class="flujo-content-title">Volver al panel m&eacute;dico</div>
+        <div class="flujo-content-sub">Aparece un mensaje de confirmaci&oacute;n. Presion&aacute; <strong>"Volver al panel m&eacute;dico"</strong>. El paciente ya va a aparecer en la lista con el indicador <span class="badge badge-ok">&#10003; Historia</span>.</div>
+      </div>
+    </div>
+
+    <div class="flujo-paso">
+      <div class="flujo-linea">
+        <div class="flujo-circulo">4</div>
+        <div class="flujo-barra"></div>
+      </div>
+      <div class="flujo-content">
+        <span class="flujo-app">Panel m&eacute;dico &rarr; pesta&ntilde;a Registrar</span>
+        <div class="flujo-content-title">Registrar la atenci&oacute;n</div>
+        <div class="flujo-content-sub">And&aacute; a la pesta&ntilde;a <strong>Registrar</strong>. En el selector de paciente, busc&aacute; el nombre reci&eacute;n cargado (tiene &#10003; si tiene historia completa). Al seleccionarlo, aparecen autom&aacute;ticamente sus alertas m&eacute;dicas (alergias, medicaci&oacute;n). Complet&aacute; motivo, diagn&oacute;stico, atenci&oacute;n realizada y si hubo derivaci&oacute;n.</div>
+      </div>
+    </div>
+
+    <div class="flujo-paso">
+      <div class="flujo-linea">
+        <div class="flujo-circulo">5</div>
+        <div class="flujo-barra" style="background:transparent"></div>
+      </div>
+      <div class="flujo-content">
+        <span class="flujo-app">Panel m&eacute;dico &rarr; Registrar</span>
+        <div class="flujo-content-title">Guardar el registro</div>
+        <div class="flujo-content-sub">Presion&aacute; <strong>"Guardar registro"</strong>. La atenci&oacute;n queda grabada y vinculada a la historia cl&iacute;nica del paciente.</div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ── SECCIÓN 4: FLUJO ALTERNATIVO ── -->
+  <h2><span class="num">4</span> Flujo alternativo &mdash; atenci&oacute;n sin historia cl&iacute;nica previa</h2>
+
+  <p style="font-size:13px;color:#555;margin-bottom:16px">Cuando la situaci&oacute;n no permite cargar la historia cl&iacute;nica antes (urgencia, paciente sin datos disponibles, etc.), se puede registrar la atenci&oacute;n directamente.</p>
+
+  <ol class="steps">
+    <li><span>And&aacute; a la pesta&ntilde;a <strong>Registrar</strong> en el Panel m&eacute;dico.</span></li>
+    <li><span>En el selector de paciente, elegí la opci&oacute;n <strong>"Otro / No est&aacute; en la lista..."</strong> al final del desplegable.</span></li>
+    <li><span>Ingres&aacute; el <strong>nombre del paciente</strong> en el campo que aparece.</span></li>
+    <li><span>Complet&aacute; todos los datos cl&iacute;nicos de la atenci&oacute;n y presion&aacute; <strong>"Guardar registro"</strong>.</span></li>
+    <li><span>El paciente queda registrado en el sistema. M&aacute;s adelante, si es posible, se puede completar su historia cl&iacute;nica usando el bot&oacute;n <strong>"+ Historia cl&iacute;nica"</strong> para enriquecer su ficha con los antecedentes.</span></li>
+  </ol>
+
+  <div class="alert-box">
+    <span>&#9888;</span>
+    <span>Cuando se usa esta opci&oacute;n, la atenci&oacute;n queda registrada pero <strong>sin las alertas m&eacute;dicas autom&aacute;ticas</strong> (alergias, medicaci&oacute;n) ya que no hay historia cl&iacute;nica previa. Se recomienda consultar verbalmente al paciente antes de la atenci&oacute;n.</span>
+  </div>
+
+
+  <!-- ── SECCIÓN 5: PESTAÑAS ── -->
+  <h2><span class="num">5</span> Las tres pesta&ntilde;as del panel m&eacute;dico</h2>
+
+  <table>
+    <tr>
+      <th>Pesta&ntilde;a</th>
+      <th>Qu&eacute; muestra / permite hacer</th>
+    </tr>
+    <tr>
+      <td><strong>&#128203; Pacientes</strong></td>
+      <td>Lista de todos los pacientes del operativo. Mostr&aacute; si tienen historia cl&iacute;nica (<span class="badge badge-ok">&#10003; Historia</span>) o no (<span class="badge badge-pend">Sin historia</span>). Al tocar un paciente, se expanden sus datos m&eacute;dicos completos. Filtros: <em>Todos / Sin historia / Con alertas</em>.</td>
+    </tr>
+    <tr>
+      <td><strong>&#129658; Registrar</strong></td>
+      <td>Formulario para cargar una nueva atenci&oacute;n m&eacute;dica. Incluye contexto (fecha, hora, ubicaci&oacute;n, profesional), selecci&oacute;n de paciente y datos cl&iacute;nicos.</td>
+    </tr>
+    <tr>
+      <td><strong>&#128193; Historial</strong></td>
+      <td>Todas las atenciones registradas en el operativo. Permite buscar por nombre, filtrar por derivaci&oacute;n o por profesional, y exportar a Excel (CSV).</td>
+    </tr>
+  </table>
+
+
+  <!-- ── SECCIÓN 6: ALERTAS ── -->
+  <h2><span class="num">6</span> Alertas m&eacute;dicas autom&aacute;ticas</h2>
+
+  <p style="font-size:14px;margin-bottom:14px">Cuando se selecciona un paciente con historia cl&iacute;nica en la pesta&ntilde;a Registrar, el sistema muestra autom&aacute;ticamente un banner rojo si el paciente tiene:</p>
+
+  <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <li style="display:flex;align-items:center;gap:10px;font-size:14px"><span style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;border-radius:12px;padding:2px 10px;font-weight:700;font-size:12px">&#9888; ALERGIA</span> Cualquier alergia distinta de "Ninguna"</li>
+    <li style="display:flex;align-items:center;gap:10px;font-size:14px"><span style="background:#FFF8E7;color:#7a4f00;border:1px solid #F5A623;border-radius:12px;padding:2px 10px;font-weight:700;font-size:12px">MEDICACI&Oacute;N</span> Medicaci&oacute;n habitual distinta de "Ninguna"</li>
+    <li style="display:flex;align-items:center;gap:10px;font-size:14px"><span style="background:#e8edf8;color:#003D6B;border-radius:12px;padding:2px 10px;font-weight:700;font-size:12px">ANT.</span> Enfermedades cr&oacute;nicas registradas</li>
+  </ul>
+
+  <div class="ok-box">
+    <span>&#10003;</span>
+    <span>Si el paciente no tiene ninguna alerta, el sistema muestra <strong>"Sin alertas m&eacute;dicas conocidas"</strong> en verde.</span>
+  </div>
+
+
+  <!-- ── SECCIÓN 7: CONSEJOS ── -->
+  <h2><span class="num">7</span> Consejos pr&aacute;cticos</h2>
+
+  <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px">
+    <li class="tip"><span class="tip-icon">&#128241;</span><span><strong>Guardar el acceso directo:</strong> En el celular, abrí el Panel m&eacute;dico en el navegador, elig&iacute; "Agregar a pantalla de inicio" para tenerlo como app.</span></li>
+    <li class="tip"><span class="tip-icon">&#8635;</span><span><strong>Actualizar los datos:</strong> El bot&oacute;n &#8635; en la esquina actualiza la lista de pacientes o el historial desde la planilla. Tambi&eacute;n se actualiza autom&aacute;ticamente cada 5 minutos.</span></li>
+    <li class="tip"><span class="tip-icon">&#128274;</span><span><strong>Sin conexi&oacute;n:</strong> Si no hay internet, la app sigue funcionando con los datos guardados localmente. Cuando se recupera la conexi&oacute;n, los datos se sincronizan solos.</span></li>
+    <li class="tip"><span class="tip-icon">&#128193;</span><span><strong>Exportar a Excel:</strong> Desde la pesta&ntilde;a Historial, el bot&oacute;n <strong>"CSV"</strong> descarga todas las atenciones del operativo para usar en Excel o cualquier planilla.</span></li>
+    <li class="tip"><span class="tip-icon">&#128100;</span><span><strong>Varios profesionales:</strong> M&uacute;ltiples m&eacute;dicos pueden usar el sistema al mismo tiempo desde distintos dispositivos. Cada uno se identifica con su nombre y matr&iacute;cula.</span></li>
+  </ul>
+
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <span>Alma Salud &mdash; Sistema de Turismo Local</span>
+    <span>Uso exclusivo del equipo m&eacute;dico</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+/* ═══════════════════════════════════════════════════════════════════
+   ALMA SALUD — Estilos compartidos (Viajes de Egresados)
+   Incluir con: <link rel="stylesheet" href="viajes-shared.css">
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Design tokens (fuente de verdad) ─────────────────────────── */
+:root {
+  --navy:          #003D6B;
+  --blue:          #00508C;
+  --gold:          #F5A623;
+  --gold2:         #E09612;
+  --red:           #DC2626;
+  --red-bg:        #FEF2F2;
+  --red-border:    #FCA5A5;
+  --green:         #16A34A;
+  --green-bg:      #F0FDF4;
+  --green-border:  #86EFAC;
+  --amber:         #D97706;
+  --amber-bg:      #FFF8E7;
+  --amber-border:  #F5A623;
+  --amber-text:    #7a4f00;
+  --border:        #dde3f0;
+  --text:          #1A1A1A;
+  --muted:         #6b7494;
+  --bg:            #F7F9FC;
+}
+
+/* ─── Semantic stat-card variants ───────────────────────────────── */
+.stat.s-navy  { border-top-color: var(--navy);  }
+.stat.s-navy  .stat-value { color: var(--navy); }
+.stat.s-green { border-top-color: var(--green); }
+.stat.s-green .stat-value { color: var(--green); }
+.stat.s-amber { border-top-color: var(--gold);  }
+.stat.s-amber .stat-value { color: var(--amber); }
+.stat.s-red   { border-top-color: var(--red);   }
+.stat.s-red   .stat-value { color: var(--red); }
+
+/* ─── Unified badges ────────────────────────────────────────────── */
+.b-completa  { background: var(--green-bg);  color: var(--green);     border: 1px solid var(--green-border); }
+.b-pendiente { background: var(--amber-bg);  color: var(--amber-text);border: 1px solid var(--amber-border); }
+.b-alerta    { background: var(--red-bg);    color: var(--red);       border: 1px solid var(--red-border); }
+.b-der       { background: var(--red-bg);    color: var(--red);       border: 1px solid var(--red-border); }
+.b-med       { background: var(--amber-bg);  color: var(--amber-text);border: 1px solid var(--amber-border); }
+.b-info      { background: #e8edf8;          color: var(--navy); }
+.b-prof      { background: var(--green-bg);  color: var(--green);     border: 1px solid var(--green-border); }
+.b-motivo    { background: #e8edf8;          color: var(--navy); }
+.b-colegio   { background: #f0f4ff;          color: var(--navy);      border: 1px solid #c5d5f0; }
+
+/* ─── Alerta médica (banner completo — B7 / B8) ─────────────────── */
+.medical-alert-banner {
+  background: var(--red);
+  color: #fff;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.medical-alert-banner .mab-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  opacity: .85;
+  margin-bottom: 3px;
+}
+
+/* ─── "All clear" banner ─────────────────────────────────────────── */
+.medical-clear-banner {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1.5px solid var(--green-border);
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* ─── Estado vacío con ilustración ──────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.empty-state svg {
+  display: block;
+  margin: 0 auto 16px;
+  opacity: .55;
+}
+.empty-state-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.empty-state-sub {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ─── Ficha-row (modal preview) ─────────────────────────────────── */
+.ficha-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  border-bottom: .5px solid var(--border);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ficha-row:last-child { border-bottom: none; }
+.ficha-row strong {
+  color: var(--navy);
+  min-width: 150px;
+  flex-shrink: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}

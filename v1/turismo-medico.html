@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alma Salud - Panel M&eacute;dico (Turismo Local)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="turismo-shared.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D6B;--blue:#00508C;--gold:#F5A623;--gold2:#E09612;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FCA5A5;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#86EFAC;
+  --orange-bg:#FFF8E7;--orange-border:#F5A623;--orange-text:#7a4f00;
+  --border:#dde3f0;--text:#1A1A1A;--muted:#6b7494;--bg:#F7F9FC;
+}
+body{font-family:'Poppins','Inter',sans-serif;color:var(--text);font-size:15px;background:#eef2f7;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.header{background:var(--navy);padding:20px 24px;display:flex;align-items:center;gap:16px;border-bottom:3px solid var(--gold)}
+.header img{height:64px;width:auto;object-fit:contain}
+.hdr-sep{width:1.5px;height:48px;background:rgba(255,255,255,.25);flex-shrink:0}
+.hdr-text{flex:1;display:flex;flex-direction:column;gap:3px}
+.hdr-title{font-size:19px;font-weight:700;color:#fff;letter-spacing:.5px}
+.hdr-sub{font-size:12px;color:var(--gold);font-weight:500}
+.hdr-medico{font-size:11px;color:rgba(255,255,255,.75);display:none;cursor:pointer}
+.hdr-medico.show{display:block}
+.hdr-op{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:8px 14px;text-align:right;cursor:pointer;flex-shrink:0;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.hdr-op:hover{background:rgba(255,255,255,.18)}
+.hdr-op-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px}
+.hdr-op-value{font-size:13px;font-weight:600;color:#fff;margin-top:2px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-op-edit{font-size:11px;color:var(--gold);margin-top:2px}
+.tabs{display:flex;background:var(--navy);border-bottom:3px solid var(--gold)}
+.tab{flex:1;padding:13px 6px;font-size:13px;font-weight:600;border:none;background:none;cursor:pointer;color:rgba(255,255,255,.45);border-bottom:3px solid transparent;margin-bottom:-3px;transition:.2s;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab:hover:not(.active){color:rgba(255,255,255,.75)}
+.body{padding:18px;background:var(--bg)}
+.sec{display:none}.sec.active{display:block}
+.card{background:#fff;border:.5px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gold);display:inline-block}
+.field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;font-size:16px;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;background:#fff;color:var(--text);transition:border-color .2s;font-family:'Poppins','Inter',sans-serif;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+textarea{resize:vertical;min-height:78px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7494' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* Toggle */
+.toggle{position:relative;width:50px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:26px;cursor:pointer;transition:.3s}
+.slider:before{content:'';position:absolute;height:18px;width:18px;left:4px;bottom:4px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.slider{background:var(--navy)}
+.toggle input:checked+.slider:before{transform:translateX(24px)}
+.toggle-row{display:flex;align-items:center;gap:14px}
+.toggle-label{font-size:15px;font-weight:600}
+.derivacion-extra{display:none;margin-top:12px}
+.derivacion-extra.show{display:block}
+/* Botones */
+.btn-primary{width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:4px}
+.btn-primary:active{background:var(--blue)}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-gold{padding:9px 16px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-gold:active{background:var(--gold2)}
+.btn-outline{padding:9px 16px;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-outline:active{background:var(--bg)}
+.btn-new-historia{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--navy);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;text-decoration:none}
+.btn-new-historia:active{background:var(--blue)}
+/* Alerts */
+.alert{border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;margin-bottom:14px;display:none}
+.alert-ok{background:var(--green-bg);border:1.5px solid var(--green-border);color:#14532d}
+.alert-err{background:var(--red-bg);border:1.5px solid var(--red-border);color:#7f1d1d}
+.offline-notice{background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:9px 14px;font-size:12px;color:var(--orange-text);margin-bottom:12px;display:none;align-items:center;gap:8px}
+.offline-notice.show{display:flex}
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:.5px solid var(--border);border-top:3px solid var(--navy);border-radius:10px;padding:12px}
+.stat.s-red{border-top-color:var(--red)}.stat.s-red .stat-value{color:var(--red)}
+.stat.s-amber{border-top-color:var(--gold)}.stat.s-amber .stat-value{color:#D97706}
+.stat.s-green{border-top-color:var(--green)}.stat.s-green .stat-value{color:var(--green)}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.stat-value{font-size:22px;font-weight:700;color:var(--navy)}
+/* Toolbar */
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* Pills */
+.pills-row{display:none;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.pills-row.show{display:flex}
+.pill-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:.15s;font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.pill-btn.active{border-color:var(--navy);background:var(--navy);color:#fff}
+.pill-btn:hover:not(.active){border-color:var(--blue);color:var(--blue)}
+.pill-count{font-size:11px;color:var(--muted);align-self:center;padding-left:2px}
+/* Fichas/Pacientes */
+.ficha-item{border-bottom:.5px solid var(--border);padding:13px 0}
+.ficha-item:last-child{border-bottom:none}
+.ficha-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.ficha-name{font-size:15px;font-weight:600;color:var(--navy)}
+.ficha-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.ficha-status{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;flex-shrink:0;margin-top:2px}
+.fs-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.fs-pend{background:var(--orange-bg);color:var(--orange-text);border:1px solid var(--orange-border)}
+.ficha-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.b-alerta{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-med{background:var(--orange-bg);color:var(--orange-text);border:1px solid var(--orange-border)}
+.b-der{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-info{background:#e8edf8;color:#003D6B}
+.b-prof{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.b-motivo{background:#e8edf8;color:#003D6B}
+.ficha-expand{display:none;margin-top:10px;background:var(--bg);border-radius:9px;padding:14px;font-size:13px;line-height:1.8}
+.ficha-expand.show{display:block}
+.ficha-row{display:flex;gap:8px;flex-wrap:wrap;padding:3px 0;border-bottom:.5px solid var(--border)}
+.ficha-row:last-child{border-bottom:none}
+.ficha-row strong{color:var(--navy);min-width:150px;flex-shrink:0;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+.hint-box{background:var(--bg);border-radius:9px;padding:12px 14px;font-size:13px;line-height:1.7;margin-top:10px;display:none;border:1px solid var(--border)}
+.hint-box.show{display:block}
+.alerta-medica{background:var(--red-bg);border:1px solid var(--red-border);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--red);margin-bottom:8px;font-weight:600}
+.otro-wrap{margin-top:10px;display:none}
+/* Atenciones */
+.record{border-bottom:.5px solid var(--border);padding:13px 0}.record:last-child{border-bottom:none}
+.rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.rec-name{font-size:15px;font-weight:600;color:var(--navy)}
+.rec-meta{font-size:12px;color:var(--muted);margin-top:1px}
+.rec-detail{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.6}
+/* Spinner */
+.loading-wrap{display:flex;align-items:center;gap:12px;padding:20px 0;color:var(--muted);font-size:14px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:2rem;color:var(--muted);font-size:14px}
+/* Refresh timestamp */
+.refresh-ts{font-size:11px;color:var(--muted);display:none}
+.refresh-ts.show{display:inline}
+/* Modales */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:26px 22px;max-width:440px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.modal .field{margin-bottom:14px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.op-item{padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+.op-item:hover{border-color:var(--navy);background:#f0f4ff}
+.op-item.active{border-color:var(--navy);background:#e8edf8}
+.op-item-name{font-weight:600;color:var(--navy);font-size:14px}
+.op-item-sub{font-size:12px;color:var(--muted);margin-top:2px}
+/* Crear operativo */
+.crear-op-form{display:none;border-top:1px solid var(--border);padding-top:14px;margin-top:8px}
+.crear-op-form.show{display:block}
+@media(max-width:480px){
+  .header{padding:13px 14px;gap:12px;flex-wrap:wrap}
+  .header img{height:50px}
+  .hdr-sep{height:36px}
+  .hdr-title{font-size:16px}
+  .hdr-op{margin-left:0;width:100%;text-align:left}
+  .body{padding:14px}
+  .g2,.g3{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .tab{font-size:12px;padding:12px 4px}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar-actions{justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+
+<!-- MODAL IDENTIFICACIÓN MÉDICO -->
+<div class="overlay" id="modal-medico">
+  <div class="modal">
+    <h3>&#128100; Identificaci&oacute;n m&eacute;dica</h3>
+    <p>Ingres&aacute; tu nombre y matr&iacute;cula. Se guardar&aacute;n en este dispositivo.</p>
+    <div class="field">
+      <label>Nombre completo <span style="color:#DC2626">*</span></label>
+      <input type="text" id="med-nombre" placeholder="Dr. Juan Garc&iacute;a..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')window.confirmarMedico()">
+    </div>
+    <div class="field">
+      <label>Matr&iacute;cula</label>
+      <input type="text" id="med-matricula" placeholder="MP 12345 / MN 67890" autocomplete="off"
+        onkeydown="if(event.key==='Enter')window.confirmarMedico()">
+    </div>
+    <div id="modal-medico-err" style="display:none;color:#DC2626;font-size:13px;margin-bottom:10px">&#9888; Ingres&aacute; tu nombre para continuar.</div>
+    <div class="modal-btns">
+      <button class="btn-gold" onclick="window.confirmarMedico()">Continuar &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SELECTOR DE OPERATIVO -->
+<div class="overlay show" id="modal-operativo">
+  <div class="modal">
+    <h3>&#127973; Panel m&eacute;dico &mdash; Turismo local</h3>
+    <p>Seleccion&aacute; el operativo activo o cre&aacute; uno nuevo.</p>
+    <div id="modal-ops-lista" style="max-height:220px;overflow-y:auto;margin-bottom:12px">
+      <div class="loading-wrap"><div class="spinner"></div>Buscando operativos...</div>
+    </div>
+
+    <!-- Crear operativo -->
+    <div style="margin-bottom:10px">
+      <button class="btn-outline" style="width:100%" onclick="window.toggleCrearOp()">&#43; Crear nuevo operativo</button>
+    </div>
+    <div class="crear-op-form" id="crear-op-form">
+      <div class="field">
+        <label>Nombre del operativo <span style="color:#DC2626">*</span></label>
+        <input type="text" id="nuevo-op-nombre" placeholder="Ej: Hotel Sol &mdash; Enero 2026" autocomplete="off"
+          onkeydown="if(event.key==='Enter')window.crearOperativo()">
+      </div>
+      <div class="field">
+        <label>Ubicaci&oacute;n</label>
+        <input type="text" id="nuevo-op-ubicacion" placeholder="Ej: Carlos Paz, C&oacute;rdoba" autocomplete="off">
+      </div>
+      <div id="crear-op-msg" style="font-size:12px;color:var(--muted);margin-bottom:8px;display:none"></div>
+      <button class="btn-gold" style="width:100%;margin-bottom:0" onclick="window.crearOperativo()">Crear y seleccionar &#8594;</button>
+    </div>
+
+    <!-- Ingreso manual por ID -->
+    <div id="manual-op-section" style="display:none;border-top:1px solid var(--border);padding-top:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">&#128279; Ingresar con ID de operativo</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="manual-op-id" placeholder="Peg&aacute; el ID" autocomplete="off" style="flex:1;font-size:14px;padding:10px 12px"
+          onkeydown="if(event.key==='Enter')window.buscarOpManual()">
+        <button class="btn-outline" onclick="window.buscarOpManual()" style="flex-shrink:0">Buscar</button>
+      </div>
+      <div id="manual-op-msg" style="font-size:12px;color:var(--muted);margin-top:6px;display:none"></div>
+    </div>
+
+    <div id="modal-op-err" style="display:none;color:#DC2626;font-size:13px;margin-bottom:10px">&#9888; Seleccion&aacute; un operativo para continuar.</div>
+    <div class="modal-btns">
+      <button class="btn-gold" onclick="window.confirmarOperativo()">Ingresar &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HISTORIA PREVIEW (desde historial) -->
+<div class="overlay" id="modal-historia-preview">
+  <div class="modal">
+    <h3 id="hp-nombre" style="margin-bottom:14px"></h3>
+    <div id="hp-body" style="font-size:13px;line-height:1.8;background:var(--bg);border-radius:9px;padding:14px"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-outline" onclick="document.getElementById('modal-historia-preview').classList.remove('show')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="wrap">
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/fabrilucen5/imagenesalmasalud/main/Alma%20Salud%20-%20Logo%202.png"
+      alt="Alma Salud"
+      onerror="this.onerror=null;this.src='https://fabrilucen5.github.io/imagenesalmasalud/Alma%20Salud%20-%20Logo%202.png'">
+    <div class="hdr-sep"></div>
+    <div class="hdr-text">
+      <span class="hdr-title">ALMA SALUD</span>
+      <span class="hdr-sub">Panel m&eacute;dico &mdash; Turismo local</span>
+      <span class="hdr-medico" id="hdr-medico" onclick="window.cambiarMedico()" title="Cambiar m&eacute;dico"></span>
+    </div>
+    <div class="hdr-op" onclick="window.abrirSelectorOp()">
+      <div class="hdr-op-label">Operativo activo</div>
+      <div class="hdr-op-value" id="hdr-nombre">&mdash;</div>
+      <div class="hdr-op-edit">&#9998; Cambiar</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="window.goTab('pacientes',this)">&#128203; Pacientes</button>
+    <button class="tab" onclick="window.goTab('registro',this)">&#129658; Registrar</button>
+    <button class="tab" onclick="window.goTab('historial',this)">&#128193; Historial</button>
+  </div>
+
+  <div class="body">
+
+    <!-- TAB PACIENTES -->
+    <div class="sec active" id="sec-pacientes">
+      <div class="offline-notice" id="offline-f">&#9888; Trabajando sin conexi&oacute;n. Los datos pueden no estar actualizados.</div>
+      <div class="card">
+        <div class="toolbar">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Pacientes</div>
+            <span class="refresh-ts" id="pacientes-ts"></span>
+          </div>
+          <div class="toolbar-actions">
+            <input type="text" id="buscar-part" placeholder="&#128269; Buscar..." oninput="window.filtrarPacientes()" style="width:150px;font-size:14px;padding:9px 13px;border-radius:8px">
+            <button class="btn-outline" onclick="window.recargarPacientes(true)">&#8635;</button>
+            <a id="btn-nueva-historia" href="#" class="btn-new-historia" target="_blank">&#43; Historia cl&iacute;nica</a>
+          </div>
+        </div>
+        <div class="pills-row" id="pills-pacientes">
+          <button class="pill-btn active" onclick="window.setFiltro('todos',this)">Todos</button>
+          <button class="pill-btn" onclick="window.setFiltro('sin_historia',this)">Sin historia</button>
+          <button class="pill-btn" onclick="window.setFiltro('alertas',this)">Con alertas</button>
+          <span class="pill-count" id="pill-count"></span>
+        </div>
+        <div id="pacientes-lista"><div class="loading-wrap"><div class="spinner"></div>Cargando pacientes...</div></div>
+      </div>
+    </div>
+
+    <!-- TAB REGISTRO -->
+    <div class="sec" id="sec-registro">
+      <div class="alert alert-ok" id="reg-ok"></div>
+      <div class="alert alert-err" id="reg-err"></div>
+
+      <div class="card" id="ctx-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="window.toggleCtx()">
+          <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">&#128205; Contexto de atenci&oacute;n</div>
+          <span id="ctx-toggle-icon" style="font-size:18px;color:var(--muted);line-height:1">&#8963;</span>
+        </div>
+        <div id="ctx-summary" style="display:none;margin-top:8px;font-size:13px;color:var(--muted);line-height:1.5"></div>
+        <div id="ctx-body" style="margin-top:14px">
+          <div class="g3">
+            <div class="field">
+              <label>Fecha <span style="color:#DC2626">*</span></label>
+              <input type="date" id="r-fecha" onchange="window.actualizarCtxSummary()">
+            </div>
+            <div class="field">
+              <label>Hora <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none">(editable)</span></label>
+              <input type="text" id="r-hora" placeholder="HH:MM" autocomplete="off" inputmode="numeric" onchange="window.actualizarCtxSummary()">
+            </div>
+            <div class="field">
+              <label>Ubicaci&oacute;n <span style="color:#DC2626">*</span></label>
+              <input type="text" id="r-sede" placeholder="Hotel, domicilio..." autocomplete="off" onblur="window.actualizarCtxSummary()">
+            </div>
+          </div>
+          <div class="field">
+            <label>Profesional que atiende <span style="color:#DC2626">*</span></label>
+            <input type="text" id="r-profesional" placeholder="Nombre y matr&iacute;cula" autocomplete="off" onblur="window.actualizarCtxSummary()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">&#128101; Paciente</div>
+        <div class="field">
+          <label>Seleccionar paciente <span style="color:#DC2626">*</span></label>
+          <select id="r-participante" onchange="window.onPartSelect()">
+            <option value="">Seleccionar...</option>
+            <option value="__otro__">&#128221; Otro / No est&aacute; en la lista...</option>
+          </select>
+        </div>
+        <div class="otro-wrap" id="otro-wrap">
+          <div class="field">
+            <label>Nombre del paciente <span style="color:#DC2626">*</span></label>
+            <input type="text" id="r-otro-nombre" placeholder="Nombre completo" autocomplete="off" autocorrect="off">
+          </div>
+        </div>
+        <div class="hint-box" id="hint-ficha"></div>
+      </div>
+
+      <div id="sticky-alert-reg" style="display:none;background:var(--red);color:#fff;border-radius:9px;padding:11px 16px;font-size:13px;font-weight:700;line-height:1.6;margin-bottom:10px"></div>
+
+      <div class="card">
+        <div class="section-title">&#129658; Datos cl&iacute;nicos</div>
+        <div class="g2">
+          <div class="field">
+            <label>Motivo de consulta <span style="color:#DC2626">*</span></label>
+            <input type="text" id="r-motivo" placeholder="Ej: Dolor de cabeza, esguince..." autocomplete="off" autocorrect="off">
+          </div>
+          <div class="field">
+            <label>Zona afectada</label>
+            <input type="text" id="r-zona" placeholder="Ej: Tobillo izquierdo..." autocomplete="off">
+          </div>
+        </div>
+        <div class="g2">
+          <div class="field">
+            <label>Diagn&oacute;stico presuntivo</label>
+            <input type="text" id="r-diagnostico" placeholder="Ej: Esguince G1..." autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Atenci&oacute;n realizada <span style="color:#DC2626">*</span></label>
+            <input type="text" id="r-atencion" placeholder="Ej: Vendaje, ibuprofeno..." autocomplete="off">
+          </div>
+        </div>
+        <div class="field">
+          <label>Observaciones</label>
+          <textarea id="r-obs" placeholder="Evoluci&oacute;n, indicaciones, seguimiento..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">&#128657; Derivaci&oacute;n</div>
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="r-derivacion" onchange="window.checkDerivacion()">
+            <span class="slider"></span>
+          </label>
+          <span class="toggle-label" id="der-label">Sin derivaci&oacute;n</span>
+        </div>
+        <div class="derivacion-extra" id="derivacion-extra">
+          <div style="margin-top:12px" class="field">
+            <label>Detalle / destino <span style="color:#DC2626">*</span></label>
+            <textarea id="r-der-detalle" placeholder="A d&oacute;nde se deriva, motivo, traslado..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-guardar" onclick="window.guardarAtencion()">&#128190; Guardar registro</button>
+    </div>
+
+    <!-- TAB HISTORIAL -->
+    <div class="sec" id="sec-historial">
+      <div class="offline-notice" id="offline-h">&#9888; Trabajando sin conexi&oacute;n.</div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Total</div><div class="stat-value" id="h-total">0</div></div>
+        <div class="stat s-red"><div class="stat-label">Derivaciones</div><div class="stat-value" id="h-der-stat">0</div></div>
+        <div class="stat s-green"><div class="stat-label">Pacientes</div><div class="stat-value" id="h-pac-stat">0</div></div>
+        <div class="stat"><div class="stat-label">Profesionales</div><div class="stat-value" id="h-prof-stat">0</div></div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input type="text" id="h-nombre" placeholder="&#128269; Buscar..." oninput="window.renderHistorial()" style="width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:140px">
+            <select id="h-der" onchange="window.renderHistorial()" style="width:auto;font-size:14px;padding:9px 13px;border-radius:8px">
+              <option value="">Todas</option>
+              <option value="si">Con derivaci&oacute;n</option>
+              <option value="no">Sin derivaci&oacute;n</option>
+            </select>
+            <select id="h-prof" onchange="window.renderHistorial()" style="width:auto;font-size:14px;padding:9px 13px;border-radius:8px;min-width:160px">
+              <option value="">Todos los profesionales</option>
+            </select>
+          </div>
+          <div class="toolbar-actions">
+            <button class="btn-outline" onclick="window.recargarHistorial(true)">&#8635;</button>
+            <button class="btn-gold" onclick="window.exportarCSV()">&#8595; CSV</button>
+          </div>
+        </div>
+        <div id="historial-lista"><div class="loading-wrap"><div class="spinner"></div>Cargando...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+window.onerror=function(msg,src,line,col,err){
+  console.error('JS Error (line '+line+'): '+msg,err);
+  var el=document.getElementById('modal-ops-lista');
+  if(el)el.innerHTML='<div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:9px;padding:18px;text-align:center">'
+    +'<div style="font-size:28px;margin-bottom:10px">&#128683;</div>'
+    +'<div style="font-size:15px;font-weight:700;color:#7f1d1d;margin-bottom:6px">Algo sali&oacute; mal</div>'
+    +'<div style="font-size:13px;color:#991b1b;margin-bottom:14px">Recarg&aacute; la p&aacute;gina para volver a intentarlo.</div>'
+    +'<button onclick="location.reload()" style="background:#DC2626;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Recargar p&aacute;gina</button>'
+    +'</div>';
+  return true;
+};
+</script>
+<script>
+const SHEETS_URL   = 'https://script.google.com/macros/s/AKfycbzGrZ7z9iK4vaKcP-kDcqMnQyJ3vETIUkj5UZ1w2gfYl5QRYlxC6VIEonkc_dBN6ISh/exec';
+const CACHE_TTL    = 5 * 60 * 1000;
+const OPS_KEY      = 'as_t_operativos_lista';
+
+let operativoActual = null;
+let selectedId      = null;
+let participantes   = [];
+let atenciones      = [];
+let medicoNombre    = '';
+let medicoMatricula = '';
+let filtroFichas    = 'todos';
+let autoRefreshTimer = null;
+let pendingOpId     = null;
+let ctxCollapsed    = false;
+
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+function genId(){return Math.random().toString(36).slice(2,10);}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
+async function sheetGet(params){
+  const url=SHEETS_URL+'?'+new URLSearchParams(params).toString();
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+function sheetPost(data){
+  fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(()=>{});
+}
+async function cachedFetch(cacheKey, fetcher, force){
+  const ts=parseInt(lsGet(cacheKey+'_ts')||'0');
+  if(!force && Date.now()-ts<CACHE_TTL){const cached=lsJson(cacheKey);if(cached)return{data:cached,offline:false};}
+  try{const data=await fetcher();lsSet(cacheKey,JSON.stringify(data));lsSet(cacheKey+'_ts',String(Date.now()));return{data,offline:false};}
+  catch(e){const cached=lsJson(cacheKey);if(cached)return{data:cached,offline:true};return{data:null,offline:true};}
+}
+
+// ── Médico identity ───────────────────────────────────────────────────
+window.confirmarMedico = function(){
+  const nombre=(document.getElementById('med-nombre').value||'').trim();
+  if(!nombre){document.getElementById('modal-medico-err').style.display='block';return;}
+  const matricula=(document.getElementById('med-matricula').value||'').trim();
+  lsSet('as_t_medico_nombre',nombre);
+  lsSet('as_t_medico_matricula',matricula);
+  medicoNombre=nombre;
+  medicoMatricula=matricula;
+  document.getElementById('modal-medico-err').style.display='none';
+  document.getElementById('modal-medico').classList.remove('show');
+  actualizarHeaderMedico();
+  if(pendingOpId){
+    const id=pendingOpId; pendingOpId=null;
+    cargarOpById(id); return;
+  }
+  renderModalOps();
+  const lastId=lsGet('as_t_last_op');
+  const lista=lsJson(OPS_KEY)||[];
+  if(lastId&&lista.find(o=>o.id===lastId)){selectedId=lastId;cargarOp(lastId);}
+  else if(lista.length===1){selectedId=lista[0].id;cargarOp(lista[0].id);}
+  else{document.getElementById('modal-operativo').classList.add('show');}
+};
+
+window.cambiarMedico = function(){
+  document.getElementById('med-nombre').value=medicoNombre;
+  document.getElementById('med-matricula').value=medicoMatricula;
+  document.getElementById('modal-medico-err').style.display='none';
+  document.getElementById('modal-medico').classList.add('show');
+};
+
+function actualizarHeaderMedico(){
+  const el=document.getElementById('hdr-medico');
+  if(el&&medicoNombre){
+    el.innerHTML='&#128100; '+esc(medicoNombre)+(medicoMatricula?' &middot; '+esc(medicoMatricula):'')+' <span style="color:var(--gold);font-size:10px">(cambiar)</span>';
+    el.classList.add('show');
+  }
+  const profEl=document.getElementById('r-profesional');
+  if(profEl&&!profEl.value){
+    profEl.value=medicoNombre+(medicoMatricula?' (Mat. '+medicoMatricula+')':'');
+  }
+}
+
+// ── Modal de operativo ────────────────────────────────────────────────
+window.abrirSelectorOp = function(){
+  renderModalOps();
+  document.getElementById('modal-operativo').classList.add('show');
+};
+window.confirmarOperativo = function(){
+  if(!selectedId){document.getElementById('modal-op-err').style.display='block';return;}
+  document.getElementById('modal-op-err').style.display='none';
+  document.getElementById('modal-operativo').classList.remove('show');
+  cargarOp(selectedId);
+};
+window.selectOp = function(id, el){
+  selectedId=id;
+  document.querySelectorAll('#modal-ops-lista .op-item').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+};
+
+window.toggleCrearOp = function(){
+  const form=document.getElementById('crear-op-form');
+  form.classList.toggle('show');
+  if(form.classList.contains('show')) document.getElementById('nuevo-op-nombre').focus();
+};
+
+window.crearOperativo = async function(){
+  const nombre=(document.getElementById('nuevo-op-nombre').value||'').trim();
+  const ubicacion=(document.getElementById('nuevo-op-ubicacion').value||'').trim();
+  const msgEl=document.getElementById('crear-op-msg');
+  if(!nombre){
+    msgEl.style.display='block';msgEl.style.color='var(--red)';
+    msgEl.textContent='Ingresá un nombre para el operativo.';return;
+  }
+  msgEl.style.display='block';msgEl.style.color='var(--muted)';msgEl.textContent='Creando...';
+
+  const id='op'+Date.now();
+  const op={id,nombre,ubicacion,fechaCreacion:new Date().toLocaleDateString('es-AR')};
+  const lista=lsJson(OPS_KEY)||[];
+  lista.push(op);
+  lsSet(OPS_KEY,JSON.stringify(lista));
+  sheetPost({tipo:'crear_operativo',...op});
+
+  selectedId=id;
+  msgEl.style.color='var(--green)';msgEl.textContent='✓ Operativo creado. Hacé clic en "Ingresar".';
+  renderModalOps();
+};
+
+async function renderModalOps(){
+  const el=document.getElementById('modal-ops-lista');
+  const manualSec=document.getElementById('manual-op-section');
+  if(!el) return;
+  el.innerHTML='<div class="loading-wrap"><div class="spinner"></div>Buscando operativos...</div>';
+  if(manualSec) manualSec.style.display='none';
+  let lista=lsJson(OPS_KEY)||[];
+  let fetchOk=false;
+  try{
+    const r=await sheetGet({tipo:'get_all_operativos'});
+    if(r.ok&&r.operativos){
+      if(r.operativos.length){
+        const sheetsIds=new Set(r.operativos.map(o=>String(o.id)));
+        const soloLocal=lista.filter(o=>!sheetsIds.has(String(o.id)));
+        lista=[...r.operativos,...soloLocal];
+        lsSet(OPS_KEY,JSON.stringify(lista));
+      }
+      fetchOk=true;
+    }
+  }catch(e){}
+  if(!lista.length){
+    el.innerHTML='<div class="empty">'
+      +(fetchOk?'No hay operativos todav&iacute;a.<br><small>Cre&aacute; uno con el bot&oacute;n de arriba.</small>'
+               :'Sin conexi&oacute;n a Sheets.<br><small>Ingres&aacute; el ID manualmente o cre&aacute; uno nuevo.</small>')
+      +'</div>';
+    if(manualSec) manualSec.style.display='block';
+    selectedId=null;return;
+  }
+  el.innerHTML=lista.map(o=>`
+    <div class="op-item${selectedId===o.id?' active':''}" onclick="window.selectOp('${o.id}',this)">
+      <div class="op-item-name">${esc(o.nombre)}</div>
+      <div class="op-item-sub">${esc(o.ubicacion||'')}${o.ubicacion&&o.fechaCreacion?' &middot; ':''}${o.fechaCreacion||''}</div>
+    </div>`).join('');
+}
+
+window.buscarOpManual = async function(){
+  const rawId=(document.getElementById('manual-op-id').value||'').trim();
+  if(!rawId) return;
+  const msgEl=document.getElementById('manual-op-msg');
+  msgEl.style.display='block';msgEl.style.color='var(--muted)';msgEl.textContent='Buscando...';
+  try{
+    const r=await sheetGet({tipo:'get_operativo',id:rawId});
+    if(r.ok&&r.operativo){
+      const lista=lsJson(OPS_KEY)||[];
+      if(!lista.find(o=>o.id===r.operativo.id)){lista.push(r.operativo);lsSet(OPS_KEY,JSON.stringify(lista));}
+      selectedId=r.operativo.id;
+      renderModalOps();
+      msgEl.style.color='var(--green)';msgEl.textContent='✓ Operativo encontrado: '+r.operativo.nombre;
+    }else{msgEl.style.color='var(--red)';msgEl.textContent='No se encontró ningún operativo con ese ID.';}
+  }catch(e){msgEl.style.color='var(--red)';msgEl.textContent='Sin conexión. Verificá el ID e intentá de nuevo.';}
+};
+
+// ── Tabs ──────────────────────────────────────────────────────────────
+window.goTab = function(id, btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='pacientes')  window.recargarPacientes(false);
+  if(id==='registro')   cargarSelectParticipantes();
+  if(id==='historial')  window.recargarHistorial(false);
+};
+
+// ── Auto-refresh ──────────────────────────────────────────────────────
+function iniciarAutoRefresh(){
+  if(autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer=setInterval(()=>{
+    if(!document.hidden&&operativoActual){
+      window.recargarPacientes(true);
+      window.recargarHistorial(true);
+    }
+  }, CACHE_TTL);
+}
+
+function actualizarTimestamp(){
+  const el=document.getElementById('pacientes-ts');
+  if(!el) return;
+  const n=new Date();
+  el.textContent='Act. '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  el.classList.add('show');
+}
+
+function actualizarBtnHistoria(){
+  const btn=document.getElementById('btn-nueva-historia');
+  if(!btn||!operativoActual) return;
+  const on=encodeURIComponent(operativoActual.nombre||'');
+  btn.href='turismo-historia.html?operativo='+operativoActual.id+'&on='+on;
+}
+
+// ── Pacientes ─────────────────────────────────────────────────────────
+window.recargarPacientes = async function(force){
+  if(!operativoActual) return;
+  document.getElementById('pacientes-lista').innerHTML='<div class="loading-wrap"><div class="spinner"></div>Cargando pacientes desde Sheets...</div>';
+  document.getElementById('offline-f').classList.remove('show');
+  const cacheKey='as_t_op_'+operativoActual.id+'_participantes';
+  const {data,offline}=await cachedFetch(cacheKey,async()=>{
+    const r=await sheetGet({tipo:'get_participantes',operativoId:operativoActual.id});
+    return r.participantes||[];
+  },force);
+  participantes=data||[];
+  if(offline) document.getElementById('offline-f').classList.add('show');
+  document.getElementById('pills-pacientes').classList.add('show');
+  actualizarTimestamp();
+  window.filtrarPacientes();
+  cargarSelectParticipantes();
+};
+
+window.setFiltro = function(tipo, btn){
+  filtroFichas=tipo;
+  document.querySelectorAll('#pills-pacientes .pill-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  window.filtrarPacientes();
+};
+
+window.filtrarPacientes = function(){
+  const q=(document.getElementById('buscar-part').value||'').toLowerCase();
+  let lista=participantes.filter(p=>{
+    if(q&&!p.nombre.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if(filtroFichas==='sin_historia'){
+    lista=lista.filter(p=>!(p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE'));
+  } else if(filtroFichas==='alertas'){
+    lista=lista.filter(p=>{
+      const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+      if(!completada) return false;
+      const fd=p.fichaData||p;
+      return (fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna')
+        ||(fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna')
+        ||(fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim());
+    });
+  }
+  const countEl=document.getElementById('pill-count');
+  if(countEl) countEl.textContent=lista.length+' de '+participantes.length;
+  renderPacientes(lista);
+};
+
+window.toggleFicha = function(i){
+  const el=document.getElementById('fe-'+i);
+  if(el) el.classList.toggle('show');
+};
+
+function renderPacientes(lista){
+  const el=document.getElementById('pacientes-lista');
+  if(!lista.length){
+    el.innerHTML='<div class="empty">'+(participantes.length?'No hay resultados para ese filtro.':'No hay pacientes en este operativo.<br><small>Us&aacute; el bot&oacute;n <b>+ Historia cl&iacute;nica</b> para agregar el primero.</small>')+'</div>';
+    return;
+  }
+  const ats=atenciones;
+  el.innerHTML=lista.map((p,i)=>{
+    const fd=p.fichaData||(p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE'?p:{});
+    const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+    const tieneAlergia=fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna';
+    const tieneMed=fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna';
+    const tieneEnf=fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim();
+    const derPrev=ats.filter(a=>a.participanteId===p.id&&a.derivacion==='SI').length;
+    const edadStr=fd.edad?(fd.edad+' a&ntilde;os'):'&mdash;';
+    const edadSexo=completada&&fd.edad?(fd.edad+' a&ntilde;os'+(fd.sexo?' &middot; '+esc(fd.sexo):'')):'';
+    const ubicStr=fd.ubicacion?esc(fd.ubicacion):'';
+    const metaStr=[edadSexo,ubicStr].filter(Boolean).join(' &bull; ');
+    const mt='style="margin-top:6px"';
+    const alertBadges=completada?(
+        (tieneAlergia?'<span class="badge b-alerta" '+mt+'>&#9888; ALERGIA: '+esc(fd.alergias)+'</span>':'')
+       +(tieneMed?'<span class="badge b-med" '+mt+'>&#128138; MEDICACI&Oacute;N: '+esc(fd.medicacion)+'</span>':'')
+       +(tieneEnf?'<span class="badge b-info" '+mt+'>ANT.: '+esc(fd.enfermedadesCronicas)+'</span>':'')
+       +(!tieneAlergia&&!tieneMed&&!tieneEnf?'<span class="badge" '+mt+' style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)">&#10003; Sin alertas</span>':'')
+    ):'';
+    const badgesHtml='<div class="ficha-badges">'
+      +alertBadges
+      +(derPrev?'<span class="badge b-der" '+mt+'>'+derPrev+' derivaci&oacute;n(es)</span>':'')
+      +(fd.grupoSanguineo?'<span class="badge b-info" '+mt+'>'+esc(fd.grupoSanguineo)+'</span>':'')
+      +(fd.telefono?'<span class="badge b-info" '+mt+'>&#128222; '+esc(fd.telefono)+'</span>':'')
+      +'</div>';
+    const emerStr=fd.contactoEmergenciaNombre?(esc(fd.contactoEmergenciaNombre)+' &mdash; '+esc(fd.contactoEmergenciaTel)):'&mdash;';
+    const obraStr=fd.obraSocial?(esc(fd.obraSocial)+(fd.numAfiliado?' (N&deg;'+esc(fd.numAfiliado)+')':'')):'&mdash;';
+    const tutorStr=fd.tutorNombre?(esc(fd.tutorNombre)+' &mdash; '+esc(fd.tutorTel)):'';
+    const expandHtml=completada?('<div class="ficha-expand" id="fe-'+i+'">'
+      +fr('Edad',edadStr)
+      +fr('DNI',fd.dni)
+      +fr('Tel&eacute;fono',fd.telefono)
+      +fr('Ubicaci&oacute;n',fd.ubicacion)
+      +fr('Grupo sangu&iacute;neo',fd.grupoSanguineo)
+      +fr('Enf. cr&oacute;nicas',fd.enfermedadesCronicas||'Ninguna')
+      +fr('Medicaci&oacute;n',fd.medicacion||'Ninguna')
+      +fr('Alergias',fd.alergias||'Ninguna')
+      +fr('Cirug&iacute;as',fd.cirugias||'Ninguna')
+      +fr('Contacto emergencia',emerStr)
+      +fr('Obra social',obraStr)
+      +(fd.tutorNombre?fr('Padre/Madre/Tutor',tutorStr):'')
+      +(fd.obs?fr('Observaciones',fd.obs):'')
+      +'</div>'):'';
+    return '<div class="ficha-item">'
+      +'<div class="ficha-header" onclick="window.toggleFicha('+i+')">'
+      +'<div><div class="ficha-name">'+esc(p.nombre)+'</div>'
+      +(metaStr?'<div class="ficha-meta">'+metaStr+'</div>':'')
+      +'</div>'
+      +'<span class="ficha-status '+(completada?'fs-ok':'fs-pend')+'">'+(completada?'&#10003; Historia':'Sin historia')+'</span>'
+      +'</div>'
+      +badgesHtml
+      +expandHtml
+      +'</div>';
+  }).join('');
+}
+
+function fr(l,v){return v&&String(v).trim()&&v!='&mdash;'?`<div class="ficha-row"><strong>${l}</strong>${String(v)}</div>`:'';}
+
+// ── Registrar atención ─────────────────────────────────────────────────
+window.onPartSelect = function(){
+  const val=document.getElementById('r-participante').value;
+  document.getElementById('otro-wrap').style.display=val==='__otro__'?'block':'none';
+  window.cargarHintFicha();
+};
+
+window.checkDerivacion = function(){
+  const c=document.getElementById('r-derivacion').checked;
+  document.getElementById('derivacion-extra').classList.toggle('show',c);
+  document.getElementById('der-label').textContent=c?'CON DERIVACIÓN':'Sin derivación';
+};
+
+window.cargarHintFicha = function(){
+  const partId=document.getElementById('r-participante').value;
+  const hint=document.getElementById('hint-ficha');
+  const stickyAlert=document.getElementById('sticky-alert-reg');
+  if(!partId||partId==='__otro__'){
+    hint.classList.remove('show');
+    if(stickyAlert) stickyAlert.style.display='none';
+    return;
+  }
+  const p=participantes.find(x=>x.id===partId);
+  if(!p||(p.fichaCompletada!==true&&String(p.fichaCompletada).toUpperCase()!=='TRUE')){
+    hint.classList.remove('show');
+    if(stickyAlert) stickyAlert.style.display='none';
+    return;
+  }
+  const fd=p.fichaData||p;
+  const alertas=[];
+  if(fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna') alertas.push('&#9888; ALERGIA: '+esc(fd.alergias));
+  if(fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna') alertas.push('MEDICACI&Oacute;N: '+esc(fd.medicacion));
+  if(fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim()) alertas.push('ANT.: '+esc(fd.enfermedadesCronicas));
+
+  if(stickyAlert){
+    if(alertas.length){stickyAlert.style.display='block';stickyAlert.innerHTML=alertas.join('<br>');}
+    else{stickyAlert.style.display='none';}
+  }
+
+  hint.innerHTML=`<strong style="font-size:11px;color:var(--navy);text-transform:uppercase;letter-spacing:.5px">Historia cl&iacute;nica &mdash; ${esc(p.nombre)}</strong>
+    ${fd.grupoSanguineo?`<div style="margin-top:6px;font-size:13px"><strong style="color:var(--navy)">Grupo:</strong> ${esc(fd.grupoSanguineo)}</div>`:''}
+    ${fd.telefono?`<div style="font-size:13px"><strong style="color:var(--navy)">Tel.</strong> ${esc(fd.telefono)}</div>`:''}
+    ${fd.contactoEmergenciaNombre?`<div style="font-size:13px"><strong style="color:var(--navy)">Emerg.:</strong> ${esc(fd.contactoEmergenciaNombre)} &mdash; ${esc(fd.contactoEmergenciaTel)}</div>`:''}
+    ${fd.obraSocial?`<div style="font-size:13px"><strong style="color:var(--navy)">Obra social:</strong> ${esc(fd.obraSocial)}</div>`:''}
+    ${!alertas.length?'<div style="margin-top:6px;font-size:13px;color:var(--green);font-weight:600">&#10003; Sin alertas m&eacute;dicas conocidas</div>':''}`;
+  hint.classList.add('show');
+};
+
+window.guardarAtencion = async function(){
+  if(!operativoActual){showAlert('reg-err','No hay operativo activo.');return;}
+  const sel=document.getElementById('r-participante');
+  const partId=sel.value;
+  const esOtro=partId==='__otro__';
+  const partNombre=esOtro
+    ?document.getElementById('r-otro-nombre').value.trim()
+    :(sel.options[sel.selectedIndex]?.text||'').replace(' ✓','');
+  const fecha=document.getElementById('r-fecha').value;
+  const hora=document.getElementById('r-hora').value;
+  const sede=document.getElementById('r-sede').value.trim();
+  const prof=document.getElementById('r-profesional').value.trim();
+  const motivo=document.getElementById('r-motivo').value.trim();
+  const zona=document.getElementById('r-zona').value.trim();
+  const diag=document.getElementById('r-diagnostico').value.trim();
+  const aten=document.getElementById('r-atencion').value.trim();
+  const obs=document.getElementById('r-obs').value.trim();
+  const der=document.getElementById('r-derivacion').checked;
+  const derDet=der?document.getElementById('r-der-detalle').value.trim():'';
+
+  if(!partId||!partNombre||!fecha||!sede||!prof||!motivo||!aten){showAlert('reg-err','Complet&aacute; los campos obligatorios (*).');return;}
+  if(der&&!derDet){showAlert('reg-err','Especific&aacute; el detalle de la derivaci&oacute;n.');return;}
+  if(esOtro&&!partNombre){showAlert('reg-err','Ingres&aacute; el nombre del paciente.');return;}
+
+  const p=participantes.find(x=>x.id===partId);
+  const edad=p?.fichaData?.edad||p?.edad||'';
+
+  const btn=document.getElementById('btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+
+  const r={
+    id:'a'+Date.now(), operativoId:operativoActual.id, operativo:operativoActual.nombre,
+    participanteId:esOtro?'':partId, participante:partNombre,
+    edad, fecha, hora, ubicacion:sede, profesional:prof,
+    motivo, zona, diagnostico:diag, atencion:aten, obs,
+    derivacion:der?'SI':'NO', derDetalle:derDet,
+    fechaRegistro:new Date().toISOString()
+  };
+
+  const cacheKey='as_t_op_'+operativoActual.id+'_atenciones';
+  const cached=lsJson(cacheKey)||[];
+  cached.unshift(r);
+  lsSet(cacheKey,JSON.stringify(cached));
+  lsSet(cacheKey+'_ts',String(Date.now()));
+  atenciones=cached;
+
+  sheetPost({tipo:'registrar_atencion',...r});
+
+  if(esOtro&&partNombre){
+    const nuevoId='p'+Date.now();
+    const nuevoP={id:nuevoId,nombre:partNombre,telefono:'',ubicacion:'',fichaCompletada:false};
+    participantes.push(nuevoP);
+    const pCacheKey='as_t_op_'+operativoActual.id+'_participantes';
+    const pCached=lsJson(pCacheKey)||[];
+    pCached.push(nuevoP);
+    lsSet(pCacheKey,JSON.stringify(pCached));
+    sheetPost({tipo:'agregar_participantes',operativoId:operativoActual.id,participantes:[nuevoP]});
+    r.participanteId=nuevoId;
+    cargarSelectParticipantes();
+  }
+
+  showAlert('reg-ok','&#10003; Registro guardado.');
+  btn.disabled=false;btn.textContent='&#128190; Guardar registro';
+  resetForm();
+};
+
+function cargarSelectParticipantes(){
+  const sel=document.getElementById('r-participante');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Seleccionar...</option>';
+  [...participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p.id;
+    const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+    o.textContent=p.nombre+(completada?' ✓':'');
+    sel.appendChild(o);
+  });
+  const otro=document.createElement('option');
+  otro.value='__otro__';
+  otro.textContent='Otro / No está en la lista...';
+  sel.appendChild(otro);
+  if(prev) sel.value=prev;
+}
+
+function resetForm(){
+  ['r-sede','r-motivo','r-zona','r-diagnostico','r-atencion','r-obs','r-der-detalle','r-otro-nombre']
+    .forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.style.borderColor='';}});
+  document.getElementById('r-participante').value='';
+  document.getElementById('r-derivacion').checked=false;
+  document.getElementById('derivacion-extra').classList.remove('show');
+  document.getElementById('der-label').textContent='Sin derivación';
+  document.getElementById('hint-ficha').classList.remove('show');
+  document.getElementById('otro-wrap').style.display='none';
+  const sa=document.getElementById('sticky-alert-reg');if(sa)sa.style.display='none';
+  document.getElementById('r-fecha').value=new Date().toISOString().split('T')[0];
+  const profEl=document.getElementById('r-profesional');
+  if(profEl&&medicoNombre){
+    profEl.value=medicoNombre+(medicoMatricula?' (Mat. '+medicoMatricula+')':'');
+  }
+  if(!ctxCollapsed) window.toggleCtx();
+}
+
+// ── Historial ──────────────────────────────────────────────────────────
+window.recargarHistorial = async function(force){
+  if(!operativoActual) return;
+  document.getElementById('historial-lista').innerHTML='<div class="loading-wrap"><div class="spinner"></div>Cargando desde Sheets...</div>';
+  document.getElementById('offline-h').classList.remove('show');
+  const cacheKey='as_t_op_'+operativoActual.id+'_atenciones';
+  const {data,offline}=await cachedFetch(cacheKey,async()=>{
+    const r=await sheetGet({tipo:'get_atenciones',operativoId:operativoActual.id});
+    return r.atenciones||[];
+  },force);
+  const local=lsJson(cacheKey)||[];
+  const sheetsData=data||[];
+  const sheetsIds=new Set(sheetsData.map(r=>String(r.id)));
+  const soloLocal=local.filter(r=>!sheetsIds.has(String(r.id)));
+  atenciones=[...sheetsData,...soloLocal].sort((a,b)=>String(b.fecha||'').localeCompare(String(a.fecha||'')));
+  lsSet(cacheKey,JSON.stringify(atenciones));
+  if(offline) document.getElementById('offline-h').classList.add('show');
+  window.renderHistorial();
+};
+
+window.renderHistorial = function(){
+  const q=(document.getElementById('h-nombre').value||'').toLowerCase();
+  const derFilt=document.getElementById('h-der').value;
+  const profSel=document.getElementById('h-prof');
+  const profFilt=profSel?profSel.value:'';
+  if(profSel){
+    const profs=[...new Set(atenciones.map(r=>r.profesional).filter(Boolean))].sort();
+    const current=profSel.value;
+    profSel.innerHTML='<option value="">Todos los profesionales</option>';
+    profs.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;profSel.appendChild(o);});
+    if(profs.includes(current)) profSel.value=current;
+  }
+  const lista=atenciones.filter(r=>{
+    if(q&&!(r.participante||'').toLowerCase().includes(q)) return false;
+    if(derFilt==='si'&&r.derivacion!=='SI') return false;
+    if(derFilt==='no'&&r.derivacion!=='NO') return false;
+    if(profFilt&&r.profesional!==profFilt) return false;
+    return true;
+  });
+
+  document.getElementById('h-total').textContent=atenciones.length;
+  document.getElementById('h-der-stat').textContent=atenciones.filter(r=>r.derivacion==='SI').length;
+  document.getElementById('h-pac-stat').textContent=[...new Set(atenciones.map(r=>r.participanteId||r.participante).filter(Boolean))].length;
+  document.getElementById('h-prof-stat').textContent=[...new Set(atenciones.map(r=>r.profesional).filter(Boolean))].length;
+
+  const el=document.getElementById('historial-lista');
+  if(!lista.length){el.innerHTML='<div class="empty">No hay registros que coincidan.</div>';return;}
+  el.innerHTML=lista.map(r=>{
+    const fecha=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}):'--';
+    return `<div class="record">
+      <div class="rec-top">
+        <div>
+          <div class="rec-name">${esc(r.participante||'&mdash;')}</div>
+          <div class="rec-meta">${fecha} &mdash; ${r.hora||'--'} &middot; ${esc(r.ubicacion||r.sede||'')}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap">
+          ${r.derivacion==='SI'?'<span class="badge b-der">DERIVADO</span>':''}
+          ${r.participanteId?`<button class="badge" style="background:#e8edf8;color:#003D6B;border:none;cursor:pointer;font-family:inherit" onclick="window.verHistoriaDesdeHistorial('${r.participanteId}')">&#128203; Historia</button>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
+        <span class="badge b-motivo">${esc(r.motivo||'&mdash;')}</span>
+        <span class="badge b-prof">${esc(r.profesional||'&mdash;')}</span>
+      </div>
+      <div class="rec-detail">
+        <b>Atenci&oacute;n:</b> ${esc(r.atencion||'&mdash;')}
+        ${r.zona?'<br><b>Zona:</b> '+esc(r.zona):''}
+        ${r.diagnostico?'<br><b>Diagn&oacute;stico:</b> '+esc(r.diagnostico):''}
+        ${r.derivacion==='SI'?'<br><b>Derivaci&oacute;n:</b> <span style="color:var(--red)">'+esc(r.derDetalle)+'</span>':''}
+        ${r.obs?'<br><b>Obs.:</b> '+esc(r.obs):''}
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.verHistoriaDesdeHistorial = function(participanteId){
+  const p=participantes.find(x=>x.id===participanteId);
+  if(!p){alert('Historia no disponible. Recargá la pestaña Pacientes primero.');return;}
+  const completada=p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+  if(!completada){alert(p.nombre+' no tiene historia clínica cargada.');return;}
+  const fd=p.fichaData||p;
+  document.getElementById('hp-nombre').textContent=p.nombre;
+  const rows=[
+    ['Edad',fd.edad?fd.edad+' años':''],['DNI',fd.dni],['Sexo',fd.sexo],
+    ['Teléfono',fd.telefono],['Ubicación',fd.ubicacion],
+    ['Grupo sanguíneo',fd.grupoSanguineo],
+    ['Enf. crónicas',fd.enfermedadesCronicas||'Ninguna'],
+    ['Medicación',fd.medicacion||'Ninguna'],
+    ['Alergias',fd.alergias||'Ninguna'],
+    ['Cirugías',fd.cirugias||'Ninguna'],
+    ['Contacto emergencia',fd.contactoEmergenciaNombre?(fd.contactoEmergenciaNombre+' — '+fd.contactoEmergenciaTel):''],
+    ['Obra social',fd.obraSocial],['N° afiliado',fd.numAfiliado],
+    ['Padre/Madre/Tutor',fd.tutorNombre?(fd.tutorNombre+' — '+fd.tutorTel):''],
+    ['Observaciones',fd.obs]
+  ];
+  document.getElementById('hp-body').innerHTML=rows
+    .filter(([,v])=>v&&String(v).trim())
+    .map(([l,v])=>`<div class="ficha-row"><strong>${l}</strong>${esc(String(v))}</div>`)
+    .join('');
+  document.getElementById('modal-historia-preview').classList.add('show');
+};
+
+window.exportarCSV = function(){
+  if(!operativoActual||!atenciones.length){alert('No hay atenciones para exportar.');return;}
+  const cols=['N°','Fecha','Hora','Paciente','Profesional','Ubicación','Motivo','Zona','Diagnóstico','Atención','Derivación','Detalle derivación','Observaciones'];
+  let csv='﻿'+cols.map(c=>'"'+c+'"').join(';')+'\n';
+  atenciones.forEach((r,i)=>{
+    csv+=[i+1,r.fecha||'',r.hora||'',r.participante||'',r.profesional||'',r.ubicacion||r.sede||'',r.motivo||'',r.zona||'',r.diagnostico||'',r.atencion||'',r.derivacion||'',r.derDetalle||'',r.obs||'']
+      .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download='Atenciones_'+(operativoActual.nombre||'').replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+};
+
+function showAlert(id,msg){
+  ['reg-ok','reg-err'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none';});
+  const el=document.getElementById(id);
+  if(el){el.innerHTML=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+}
+
+// ── Carga del operativo ────────────────────────────────────────────────
+function cargarOp(id){
+  const lista=lsJson(OPS_KEY)||[];
+  operativoActual=lista.find(o=>o.id===id)||null;
+  if(!operativoActual) return;
+  lsSet('as_t_last_op',id);
+  document.getElementById('hdr-nombre').textContent=operativoActual.nombre;
+  participantes=[];atenciones=[];
+  actualizarBtnHistoria();
+  iniciarAutoRefresh();
+  window.recargarPacientes(false);
+  const cacheKey='as_t_op_'+id+'_atenciones';
+  cachedFetch(cacheKey,async()=>{
+    const r=await sheetGet({tipo:'get_atenciones',operativoId:id});
+    return r.atenciones||[];
+  },false).then(({data})=>{if(data)atenciones=data;}).catch(()=>{});
+}
+
+async function cargarOpById(id){
+  const lista=lsJson(OPS_KEY)||[];
+  operativoActual=lista.find(o=>o.id===id)||null;
+  if(!operativoActual){
+    try{
+      const r=await sheetGet({tipo:'get_operativo',id});
+      if(r.ok&&r.operativo){
+        operativoActual=r.operativo;
+        lista.push(operativoActual);
+        lsSet(OPS_KEY,JSON.stringify(lista));
+      }
+    }catch(e){}
+  }
+  if(!operativoActual){
+    document.getElementById('modal-operativo').classList.add('show');
+    document.getElementById('modal-ops-lista').innerHTML='<div class="empty">No se encontr&oacute; el operativo. Verific&aacute; el link o cre&aacute; uno nuevo.</div>';
+    return;
+  }
+  selectedId=id;
+  lsSet('as_t_last_op',id);
+  document.getElementById('hdr-nombre').textContent=operativoActual.nombre;
+  participantes=[];atenciones=[];
+  actualizarBtnHistoria();
+  iniciarAutoRefresh();
+  window.recargarPacientes(false);
+  const cacheKey='as_t_op_'+id+'_atenciones';
+  cachedFetch(cacheKey,async()=>{
+    const r=await sheetGet({tipo:'get_atenciones',operativoId:id});
+    return r.atenciones||[];
+  },false).then(({data})=>{if(data)atenciones=data;}).catch(()=>{});
+}
+
+// ── Contexto colapsable ────────────────────────────────────────────────
+window.toggleCtx = function(){
+  ctxCollapsed=!ctxCollapsed;
+  document.getElementById('ctx-body').style.display=ctxCollapsed?'none':'';
+  document.getElementById('ctx-summary').style.display=ctxCollapsed?'block':'none';
+  document.getElementById('ctx-toggle-icon').innerHTML=ctxCollapsed?'&#8964;':'&#8963;';
+  if(ctxCollapsed) window.actualizarCtxSummary();
+};
+window.actualizarCtxSummary = function(){
+  const fecha=document.getElementById('r-fecha').value||'';
+  const hora=document.getElementById('r-hora').value||'';
+  const sede=(document.getElementById('r-sede').value||'').trim();
+  const prof=(document.getElementById('r-profesional').value||'').trim();
+  const parts=[];
+  if(fecha) parts.push('&#128197; '+fecha+(hora?' '+hora:''));
+  if(prof) parts.push(prof);
+  if(sede) parts.push('&#128205; '+sede);
+  document.getElementById('ctx-summary').innerHTML=parts.join(' &middot; ')||'(sin completar)';
+};
+
+// ── Init ───────────────────────────────────────────────────────────────
+function init(){
+  setInterval(()=>{
+    const n=new Date();
+    const el=document.getElementById('r-hora');
+    if(el&&document.activeElement!==el)
+      el.value=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  },1000);
+  document.getElementById('r-fecha').value=new Date().toISOString().split('T')[0];
+
+  medicoNombre=lsGet('as_t_medico_nombre')||'';
+  medicoMatricula=lsGet('as_t_medico_matricula')||'';
+
+  const urlParams=new URLSearchParams(window.location.search);
+  const paramOpId=urlParams.get('operativo');
+
+  if(!medicoNombre){
+    document.getElementById('modal-operativo').classList.remove('show');
+    document.getElementById('modal-medico').classList.add('show');
+    if(paramOpId) pendingOpId=paramOpId;
+    return;
+  }
+
+  actualizarHeaderMedico();
+
+  if(paramOpId){
+    document.getElementById('modal-operativo').classList.remove('show');
+    cargarOpById(paramOpId);
+    return;
+  }
+
+  const lista=lsJson(OPS_KEY)||[];
+  renderModalOps();
+  const lastId=lsGet('as_t_last_op');
+  if(lastId&&lista.find(o=>o.id===lastId)){
+    selectedId=lastId;
+    document.getElementById('modal-operativo').classList.remove('show');
+    cargarOp(lastId);
+  } else if(lista.length===1){
+    selectedId=lista[0].id;
+    document.getElementById('modal-operativo').classList.remove('show');
+    cargarOp(lista[0].id);
+  }
+}
+init();
+</script>
+<script src="viajes-icons.js" defer></script>
+</body>
+</html>
