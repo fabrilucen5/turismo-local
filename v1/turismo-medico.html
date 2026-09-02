@@ -150,6 +150,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* Print / PDF */
 #printArea{display:none}
 @media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
   body>*{display:none!important}
   #printArea{display:block!important;font-family:'Segoe UI',Arial,sans-serif;color:#1a1a1a;padding:32px 40px}
   .pr-header{border-bottom:4px solid #F5A623;padding-bottom:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end}
@@ -302,6 +303,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <div class="toolbar-actions">
             <input type="text" id="buscar-part" placeholder="&#128269; Buscar..." oninput="window.filtrarPacientes()" style="width:150px;font-size:14px;padding:9px 13px;border-radius:8px">
             <button class="btn-outline" onclick="window.recargarPacientes(true)">&#8635;</button>
+            <button class="btn-gold" onclick="window.exportarPacientesPDF()">&#128196; PDF</button>
             <a id="btn-nueva-historia" href="#" class="btn-new-historia" target="_blank">&#43; Historia cl&iacute;nica</a>
           </div>
         </div>
@@ -485,6 +487,18 @@ function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsJson(k){try{const r=lsGet(k);return r?JSON.parse(r):null;}catch(e){return null;}}
 function genId(){return Math.random().toString(36).slice(2,10);}
 function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+function formatFechaAR(v){
+  if(!v) return '--';
+  const s=String(v);
+  const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); // "YYYY-MM-DD" o ISO completo devuelto por Sheets
+  if(m){
+    const d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),12,0,0);
+    if(!isNaN(d)) return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  const d2=new Date(s);
+  if(!isNaN(d2)) return d2.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  return s; // último recurso: mostrar el valor tal cual en vez de "Invalid Date"
+}
 
 async function sheetGet(params){
   const url=SHEETS_URL+'?'+new URLSearchParams(params).toString();
@@ -994,7 +1008,7 @@ window.renderHistorial = function(){
   const el=document.getElementById('historial-lista');
   if(!lista.length){el.innerHTML='<div class="empty">No hay registros que coincidan.</div>';return;}
   el.innerHTML=lista.map(r=>{
-    const fecha=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}):'--';
+    const fecha=formatFechaAR(r.fecha);
     return `<div class="record">
       <div class="rec-top">
         <div>
@@ -1057,7 +1071,7 @@ window.exportarPDF = function(){
   const profs=[...new Set(atenciones.map(r=>r.profesional).filter(Boolean))];
 
   const filas=atenciones.map(r=>{
-    const fecha=r.fecha?new Date(r.fecha+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}):'--';
+    const fecha=formatFechaAR(r.fecha);
     const der=r.derivacion==='SI';
     return `<tr>
       <td>${fecha}<br><small>${r.hora||''}</small></td>
@@ -1103,6 +1117,88 @@ window.exportarPDF = function(){
           <th>Atenci&oacute;n / Diagn&oacute;stico</th>
           <th>Derivaci&oacute;n</th>
           <th>Profesional</th>
+        </tr>
+      </thead>
+      <tbody>${filas}</tbody>
+    </table>
+
+    <div class="pr-footer">
+      <span>Alma Salud &mdash; Uso exclusivo del equipo m&eacute;dico</span>
+      <span>${fechaHoy}</span>
+    </div>`;
+  window.print();
+};
+
+window.exportarPacientesPDF = function(){
+  if(!operativoActual||!participantes.length){alert('No hay pacientes para exportar.');return;}
+  const fechaHoy=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'});
+  const esCompleta=p=>p.fichaCompletada===true||String(p.fichaCompletada).toUpperCase()==='TRUE';
+  const total=participantes.length;
+  const completos=participantes.filter(esCompleta).length;
+  const pendientes=total-completos;
+  const conAlertas=participantes.filter(p=>{
+    if(!esCompleta(p)) return false;
+    const fd=p.fichaData||p;
+    return (fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna')
+      ||(fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna')
+      ||(fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim());
+  }).length;
+
+  const filas=[...participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p=>{
+    const completada=esCompleta(p);
+    const fd=p.fichaData||(completada?p:{});
+    const edadSexo=[fd.edad?fd.edad+' a.':'',fd.sexo||''].filter(Boolean).join(' &middot; ');
+    const contacto=[fd.telefono||'',fd.ubicacion||''].filter(Boolean).map(esc).join('<br>');
+    const alertasArr=[];
+    if(fd.alergias&&String(fd.alergias).toLowerCase()!='ninguna') alertasArr.push('Alergia: '+esc(fd.alergias));
+    if(fd.medicacion&&String(fd.medicacion).toLowerCase()!='ninguna') alertasArr.push('Medicaci&oacute;n: '+esc(fd.medicacion));
+    if(fd.enfermedadesCronicas&&String(fd.enfermedadesCronicas).trim()) alertasArr.push('Ant.: '+esc(fd.enfermedadesCronicas));
+    const alertasHtml=!completada?'&mdash;':(alertasArr.length?'<span class="pr-der">'+alertasArr.join('<br>')+'</span>':'Sin alertas');
+    const emerg=fd.contactoEmergenciaNombre?(esc(fd.contactoEmergenciaNombre)+(fd.contactoEmergenciaTel?' &mdash; '+esc(fd.contactoEmergenciaTel):'')):'&mdash;';
+    const obra=fd.obraSocial?(esc(fd.obraSocial)+(fd.numAfiliado?' (N&deg;'+esc(fd.numAfiliado)+')':'')):'&mdash;';
+    return `<tr>
+      <td><strong>${esc(p.nombre)}</strong>${fd.dni?'<br><small>DNI '+esc(fd.dni)+'</small>':''}</td>
+      <td>${edadSexo||'&mdash;'}</td>
+      <td>${contacto||'&mdash;'}</td>
+      <td>${alertasHtml}</td>
+      <td>${emerg}</td>
+      <td>${obra}</td>
+      <td>${completada?'<span style="color:#16A34A;font-weight:700">Completa</span>':'<span style="color:#D97706;font-weight:700">Pendiente</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('printArea').innerHTML=`
+    <div class="pr-header">
+      <div>
+        <div class="pr-logo-title">ALMA SALUD</div>
+        <div class="pr-logo-sub">Listado de pacientes &mdash; Turismo local</div>
+      </div>
+      <div class="pr-meta">
+        <strong>${esc(operativoActual.nombre)}</strong><br>
+        ${operativoActual.ubicacion?esc(operativoActual.ubicacion)+'<br>':''}
+        Generado: ${fechaHoy}
+      </div>
+    </div>
+
+    <div class="pr-section">Resumen</div>
+    <div class="pr-stats">
+      <div class="pr-stat"><div class="pr-stat-val">${total}</div><div class="pr-stat-lbl">Pacientes</div></div>
+      <div class="pr-stat"><div class="pr-stat-val">${completos}</div><div class="pr-stat-lbl">Con historia</div></div>
+      <div class="pr-stat"><div class="pr-stat-val">${pendientes}</div><div class="pr-stat-lbl">Pendientes</div></div>
+      <div class="pr-stat"><div class="pr-stat-val">${conAlertas}</div><div class="pr-stat-lbl">Con alertas</div></div>
+    </div>
+
+    <div class="pr-section">Listado de pacientes</div>
+    <table class="pr-table">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Edad / Sexo</th>
+          <th>Contacto</th>
+          <th>Alertas m&eacute;dicas</th>
+          <th>Contacto emergencia</th>
+          <th>Obra social</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>${filas}</tbody>
